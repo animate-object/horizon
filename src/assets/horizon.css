@@ -1,0 +1,89 @@
+:root {
+  /* Neutrals - Warm grayscale (paper-inspired) */
+  --color-bg: #0e1712; /* Base background, like wooden desk */
+  --color-paper: #fafaf8; /* Card/container background */
+  --color-white: #ffffff; /* Elevated surfaces */
+
+  --color-ink: #1a1614; /* Primary text, darkest */
+  --color-gray-900: #2d2a26; /* Body text */
+  --color-gray-700: #4a453f; /* Secondary text */
+  --color-gray-500: #6b6560; /* Muted text, labels */
+  --color-gray-300: #a8a39d; /* Disabled text */
+  --color-gray-200: #d4d0ca; /* Borders, dividers */
+  --color-gray-100: #e8e4de; /* Subtle borders */
+  --color-gray-50: #f0ede8; /* Hover states, backgrounds */
+
+  /* Forest Green - Primary accent */
+  --color-primary: #2d5016; /* Main green, buttons, links */
+  --color-primary-hover: #1f3a0f; /* Darker on hover */
+  --color-primary-active: #3d6b1f; /* Brighter when active/selected */
+  --color-primary-light: #e8f0e0; /* Backgrounds, highlights */
+  --color-primary-pale: #f4f8f0; /* Subtle tints */
+
+  /* Semantic colors */
+  --color-success: #2d5016; /* Same as primary */
+  --color-warning: #8b6914; /* Amber/ochre */
+  --color-error: #8b2e2e; /* Dark red */
+  --color-info: #2c4f6b; /* Muted blue */
+
+  /* Semantic light variants */
+  --color-success-light: #e8f0e0;
+  --color-warning-light: #faf5e6;
+  --color-error-light: #f8e8e8;
+  --color-info-light: #e6eef4;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+  /* Green-tinted shadows for active states */
+  --shadow-primary: 0 2px 8px rgba(45, 80, 22, 0.12);
+  --shadow-primary-lg: 0 4px 16px rgba(45, 80, 22, 0.18);
+
+  /* Focus rings */
+  --focus-ring: 0 0 0 3px var(--color-primary-light);
+  --focus-ring-error: 0 0 0 3px var(--color-error-light);
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+}
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.paper {
+  background-color: var(--color-paper);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-right: 0.75rem;
+  padding-left: 0.75rem;
+}
+
+.layout {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.content {
+  margin-top: 5%;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  row-gap: 1rem;
+}
