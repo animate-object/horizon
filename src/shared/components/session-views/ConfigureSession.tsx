@@ -94,111 +94,116 @@ export function ConfigureSession() {
   return (
     <>
       <Text.Header>New Session</Text.Header>
-      <div className="flex flex-col px-20 py-6 gap-2">
-        <FormElementWrapper label="What are you here to do?">
-          <textarea
-            id="description"
-            className="textarea textarea-primary"
-            value={taskDescription}
-            onChange={(evt) => {
-              setTaskDescription(evt.currentTarget.value);
-            }}
-          />
-        </FormElementWrapper>
-        <FormElementWrapper label="What tools will you use?">
-          <div
-            style={{ display: "flex", flexDirection: "column", rowGap: "1rem" }}
-          >
-            {tools.map((toolUrl, idx) => {
-              return (
-                <div key={idx} style={{ display: "flex", columnGap: "1rem" }}>
-                  <input
-                    className="input"
-                    onChange={(evt) =>
-                      handleUpdateTool(evt.currentTarget.value, idx)
-                    }
-                    onFocus={() => setFocusedIdx(idx)}
-                    onBlur={() => setFocusedIdx(null)}
-                    style={{
-                      flexGrow: 1,
-                      color:
-                        !isValidToolDef(toolUrl) && focusedIdx !== idx
-                          ? "red"
-                          : undefined,
-                    }}
-                    value={toolUrl}
-                  />
-                  <Button
-                    color="destructive"
-                    circle
-                    soft
-                    onClick={() => handleRemoveTool(idx)}
-                    style={{ flexShrink: 0 }}
-                    disabled={tools.length < 2}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      className="size-6"
+      <div className="flex flex-col items-center w-full h-full">
+        <div className="flex flex-col py-6 gap-2 w-10/12">
+          <FormElementWrapper label="What are you here to do?">
+            <textarea
+              id="description"
+              className="textarea textarea-primary w-10/12"
+              value={taskDescription}
+              onChange={(evt) => {
+                setTaskDescription(evt.currentTarget.value);
+              }}
+            />
+          </FormElementWrapper>
+          <FormElementWrapper label="What tools will you use?">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                rowGap: "1rem",
+              }}
+            >
+              {tools.map((toolUrl, idx) => {
+                return (
+                  <div key={idx} style={{ display: "flex", columnGap: "1rem" }}>
+                    <input
+                      className="input w-10/12"
+                      onChange={(evt) =>
+                        handleUpdateTool(evt.currentTarget.value, idx)
+                      }
+                      onFocus={() => setFocusedIdx(idx)}
+                      onBlur={() => setFocusedIdx(null)}
+                      style={{
+                        color:
+                          !isValidToolDef(toolUrl) && focusedIdx !== idx
+                            ? "red"
+                            : undefined,
+                      }}
+                      value={toolUrl}
+                    />
+                    <Button
+                      color="destructive"
+                      circle
+                      soft
+                      onClick={() => handleRemoveTool(idx)}
+                      style={{ flexShrink: 0 }}
+                      disabled={tools.length < 2}
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                      />
-                    </svg>
-                  </Button>
-                </div>
-              );
-            })}
-            <div>
-              <Button onClick={handleAddTool}>+ Add another</Button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                        />
+                      </svg>
+                    </Button>
+                  </div>
+                );
+              })}
+              <div>
+                <Button onClick={handleAddTool}>+ Add another</Button>
+              </div>
             </div>
-          </div>
-        </FormElementWrapper>
+          </FormElementWrapper>
 
-        <FormElementWrapper label="How long will you work?">
-          <select
-            className="select"
-            value={duration}
-            onChange={(evt) => {
-              const value = evt.currentTarget.value;
-              if (value === "not-selected") {
-                setDuration(value);
-              }
-              setDuration(parseInt(value));
+          <FormElementWrapper label="How long will you work?">
+            <select
+              className="select"
+              value={duration}
+              onChange={(evt) => {
+                const value = evt.currentTarget.value;
+                if (value === "not-selected") {
+                  setDuration(value);
+                }
+                setDuration(parseInt(value));
+              }}
+            >
+              <option value="not-selected">--</option>
+              <option value="1">1 minutes (testing)</option>
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">60 minutes</option>
+              <option value="90">90 minutes</option>
+              <option value="120">120 minutes</option>
+            </select>
+          </FormElementWrapper>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: "1rem",
+              color: "red",
             }}
           >
-            <option value="not-selected">--</option>
-            <option value="1">1 minutes (testing)</option>
-            <option value="5">5 minutes</option>
-            <option value="10">10 minutes</option>
-            <option value="30">30 minutes</option>
-            <option value="60">60 minutes</option>
-            <option value="90">90 minutes</option>
-            <option value="120">120 minutes</option>
-          </select>
-        </FormElementWrapper>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            rowGap: "1rem",
-            color: "red",
-          }}
-        >
-          {!allToolsEmpty && isAnyToolInvalid && focusedIdx == null && (
-            <span>One or more tools are not valid URLs</span>
-          )}
-        </div>
-        <div>
-          <Button onClick={handleSubmit} disabled={!isFormValid}>
-            Start session
-          </Button>
+            {!allToolsEmpty && isAnyToolInvalid && focusedIdx == null && (
+              <span>One or more tools are not valid URLs</span>
+            )}
+          </div>
+          <div>
+            <Button onClick={handleSubmit} disabled={!isFormValid}>
+              Start session
+            </Button>
+          </div>
         </div>
       </div>
     </>
