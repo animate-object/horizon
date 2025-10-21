@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { DataLoader, ToolDefinition } from "../lib/datastore";
 import CreatableSelect from "react-select/creatable";
 import { isEmpty } from "lodash";
+import clsx from "clsx";
 
 const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
 
@@ -67,7 +68,11 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
         container: () => "w-full",
         control: () => "rounded-0 border-primary border-1 px-3",
         menu: () => "rounded-0 border-primary border-1 bg-base-300",
-        option: () => "px-3 py-2 text-primary",
+        option: ({ isFocused, isSelected }) =>
+          clsx("px-3 py-2 text-primary", {
+            "bg-base-200": isFocused,
+            "border-primary": isSelected,
+          }),
       }}
       isClearable
       unstyled

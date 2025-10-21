@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FormElementWrapper } from "../layout/form";
 import { Storage } from "@/shared/storage";
 import { SessionConfiguration } from "@/shared/session";
 import { MessageBuilder } from "@/shared/messages";
 import Button from "../design/Button";
 import Text from "../design/Text";
-import { ToolTypeahead } from "../ToolTypeahead";
+import { SessionTools } from "./SessionTools";
 
 const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
 
@@ -16,44 +16,8 @@ const isValidToolDef = (toolUrl: string): boolean => {
 export function ConfigureSession() {
   const [taskDescription, setTaskDescription] = useState("");
   const [tools, setTools] = useState<string[]>([""]);
-  const [focusedIdx, setFocusedIdx] = useState<number | null>(null);
   const [duration, setDuration] = useState<number | "not-selected">(
     "not-selected"
-  );
-
-  const handleAddTool = useCallback(() => {
-    setTools([...tools, ""]);
-  }, [tools, setTools]);
-
-  const handleUpdateTool = useCallback(
-    (newValue: string, idx: number) => {
-      setTools((tools) => [
-        ...tools.slice(0, idx),
-        newValue,
-        ...tools.slice(idx + 1),
-      ]);
-    },
-    [setTools]
-  );
-
-  const handleRemoveTool = useCallback(
-    (idx: number) => {
-      console.log(tools.length);
-      if (tools.length < 2) {
-        return;
-      }
-
-      setTools((tools) => {
-        console.log("remove", {
-          idx,
-          atIdx: tools[idx],
-          before: tools.slice(0, idx),
-          after: tools.slice(idx + 1),
-        });
-        return [...tools.slice(0, idx), ...tools.slice(idx + 1)];
-      });
-    },
-    [setTools, tools]
   );
 
   const allToolsEmpty = useMemo(
@@ -108,54 +72,7 @@ export function ConfigureSession() {
             />
           </FormElementWrapper>
           <FormElementWrapper label="What tools will you use?">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                rowGap: "1rem",
-              }}
-            >
-              {tools.map((toolUrl, idx) => {
-                return (
-                  <div key={idx} className="flex gap-4  items-center">
-                    <ToolTypeahead
-                      onSelect={(data) =>
-                        handleUpdateTool(data?.url ?? "", idx)
-                      }
-                      onFocus={() => setFocusedIdx(idx)}
-                      onBlur={() => setFocusedIdx(null)}
-                      value={toolUrl}
-                    />
-                    <Button
-                      color="destructive"
-                      circle
-                      soft
-                      onClick={() => handleRemoveTool(idx)}
-                      style={{ flexShrink: 0 }}
-                      disabled={tools.length < 2}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
-                    </Button>
-                  </div>
-                );
-              })}
-              <div>
-                <Button onClick={handleAddTool}>+ Add another</Button>
-              </div>
-            </div>
+            <SessionTools tools={tools} onUpdateTools={setTools} />
           </FormElementWrapper>
 
           <FormElementWrapper label="How long will you work?">
@@ -189,7 +106,7 @@ export function ConfigureSession() {
               color: "red",
             }}
           >
-            {!allToolsEmpty && isAnyToolInvalid && focusedIdx == null && (
+            {!allToolsEmpty && isAnyToolInvalid && (
               <span>One or more tools are not valid URLs</span>
             )}
           </div>
