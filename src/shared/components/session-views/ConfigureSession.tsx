@@ -5,6 +5,7 @@ import { SessionConfiguration } from "@/shared/session";
 import { MessageBuilder } from "@/shared/messages";
 import Button from "../design/Button";
 import Text from "../design/Text";
+import { ToolDefinitionTypeahead } from "../ToolTypeahead";
 
 const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
 

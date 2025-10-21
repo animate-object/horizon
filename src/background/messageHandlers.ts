@@ -1,11 +1,11 @@
 import { clearAllBlockingRules } from "@/shared/lib/rules";
 import {
-  AlarmType,
-  Message,
-  MessageBuilder,
-  MessageType,
-} from "@/shared/messages";
-import { computeSessionEndEpoch, SessionConfiguration } from "@/shared/session";
+  DataLoader,
+  PastSession,
+  PastSessionFactory,
+} from "@/shared/lib/datastore";
+import { AlarmType, Message, MessageType } from "@/shared/messages";
+import { SessionConfiguration } from "@/shared/session";
 import { Storage } from "@/shared/storage";
 
 type MessageHandler = Parameters<
@@ -45,38 +45,55 @@ const UNIVERSAL_BLOCK_RULE: chrome.declarativeNetRequest.Rule = {
 
 const handleSessionStarted = async () => {
   console.log("handling session start");
+  const dataLoader = new DataLoader();
 
   const config = await Storage.get<SessionConfiguration | undefined>(
     Storage.keys.ActiveSessionConfig,
     undefined
   );
-  if (config) {
-    const sessionRules: chrome.declarativeNetRequest.Rule[] =
-      config.allowedToolUrls.map((toolDef, idx) => {
-        return {
-          id: idx + 2,
-          priority: 10,
-          action: { type: "allow" },
-          condition: {
-            urlFilter: `||${toolDef}`,
-            resourceTypes: ["main_frame"],
-          },
-        };
-      });
-
-    const rules = [UNIVERSAL_BLOCK_RULE, ...sessionRules];
-
-    console.log("Setting network request rules!", rules);
-    clearAllBlockingRules();
-
-    await chrome.declarativeNetRequest.updateDynamicRules({
-      addRules: rules,
-    });
-
-    chrome.alarms.create(AlarmType.sessionFinished, {
-      delayInMinutes: config.durationMinutes,
-    });
+  if (config == null) {
+    console.warn("Failed to start session, config was null");
+    return;
   }
+
+  const sessionRules: chrome.declarativeNetRequest.Rule[] =
+    config.allowedToolUrls.map((toolDef, idx) => {
+      return {
+        id: idx + 2,
+        priority: 10,
+        action: { type: "allow" },
+        condition: {
+          urlFilter: `||${toolDef}`,
+          resourceTypes: ["main_frame"],
+        },
+      };
+    });
+
+  const rules = [UNIVERSAL_BLOCK_RULE, ...sessionRules];
+
+  console.log("Setting network request rules!", rules);
+  clearAllBlockingRules();
+
+  await chrome.declarativeNetRequest.updateDynamicRules({
+    addRules: rules,
+  });
+
+  chrome.alarms.create(AlarmType.sessionFinished, {
+    delayInMinutes: config.durationMinutes,
+  });
+
+  const toolDefinitions = await dataLoader.upsertToolDefinitions(
+    config.allowedToolUrls.map((url) => ({ url }))
+  );
+
+  const pastSession: PastSession = PastSessionFactory.create({
+    startedAt: config.startedAt,
+    durationMinutes: config.durationMinutes,
+    toolIds: toolDefinitions.map((td) => td.id),
+    taskDescription: config.taskDescription,
+  });
+
+  dataLoader.upsert(pastSession);
 };
 
 const handleKnownMessage = async (

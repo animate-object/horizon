@@ -42,9 +42,7 @@ function Landing() {
       if (area !== "local") return;
       const activeSessionConfig = changes[Storage.keys.ActiveSessionConfig];
       if (activeSessionConfig?.newValue) {
-        setSessionState(
-          computeSessionState(JSON.parse(activeSessionConfig.newValue))
-        );
+        setSessionState(computeSessionState(activeSessionConfig.newValue));
       }
     };
     chrome.storage.onChanged.addListener(listener);

@@ -41,7 +41,7 @@ function SessionData() {
       if (area !== "local") return;
       const activeSessionConfig =
         changes[Storage.keys.ActiveSessionConfig]?.newValue;
-      setSessionData(JSON.parse(activeSessionConfig ?? "{}"));
+      setSessionData(activeSessionConfig ?? {});
     };
     chrome.storage.onChanged.addListener(listener);
     return () => {

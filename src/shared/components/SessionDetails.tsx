@@ -12,7 +12,12 @@ export function SessionDetails({
       <Text.SubHeader>You can use these tools:</Text.SubHeader>
       <ul className="list bg-base-300 shadow-xs">
         {allowedToolUrls.map((tool) => (
-          <a className="link" target="_blank" href={`https://${tool}`}>
+          <a
+            key={tool}
+            className="link"
+            target="_blank"
+            href={`https://${tool}`}
+          >
             <li className="list-row" key={tool}>
               {tool}
             </li>
