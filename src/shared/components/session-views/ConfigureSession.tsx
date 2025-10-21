@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
-import { FormContainer, FormElementWrapper } from "../layout/form";
+import { FormElementWrapper } from "../layout/form";
 import { Storage } from "@/shared/storage";
 import { SessionConfiguration } from "@/shared/session";
 import { MessageBuilder } from "@/shared/messages";
 import Button from "../design/Button";
 import Text from "../design/Text";
-import { ToolDefinitionTypeahead } from "../ToolTypeahead";
+import { ToolTypeahead } from "../ToolTypeahead";
 
 const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
 
@@ -96,11 +96,11 @@ export function ConfigureSession() {
     <>
       <Text.Header>New Session</Text.Header>
       <div className="flex flex-col items-center w-full h-full">
-        <div className="flex flex-col py-6 gap-2 w-10/12">
+        <div className="flex flex-col py-6 gap-2 w-full">
           <FormElementWrapper label="What are you here to do?">
             <textarea
               id="description"
-              className="textarea textarea-primary w-10/12"
+              className="textarea textarea-primary w-full"
               value={taskDescription}
               onChange={(evt) => {
                 setTaskDescription(evt.currentTarget.value);
@@ -117,20 +117,13 @@ export function ConfigureSession() {
             >
               {tools.map((toolUrl, idx) => {
                 return (
-                  <div key={idx} style={{ display: "flex", columnGap: "1rem" }}>
-                    <input
-                      className="input w-10/12"
-                      onChange={(evt) =>
-                        handleUpdateTool(evt.currentTarget.value, idx)
+                  <div key={idx} className="flex gap-4  items-center">
+                    <ToolTypeahead
+                      onSelect={(data) =>
+                        handleUpdateTool(data?.url ?? "", idx)
                       }
                       onFocus={() => setFocusedIdx(idx)}
                       onBlur={() => setFocusedIdx(null)}
-                      style={{
-                        color:
-                          !isValidToolDef(toolUrl) && focusedIdx !== idx
-                            ? "red"
-                            : undefined,
-                      }}
                       value={toolUrl}
                     />
                     <Button
@@ -167,7 +160,7 @@ export function ConfigureSession() {
 
           <FormElementWrapper label="How long will you work?">
             <select
-              className="select"
+              className="select w-half"
               value={duration}
               onChange={(evt) => {
                 const value = evt.currentTarget.value;

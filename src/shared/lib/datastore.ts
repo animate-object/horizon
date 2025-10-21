@@ -202,6 +202,7 @@ export class DataLoader {
     for (const def of unknown) {
       if (lookup[def.url] != null) {
         upsertedDefinitions.push(lookup[def.url]);
+        continue;
       }
       upsertedDefinitions.push(
         await this.upsert(
