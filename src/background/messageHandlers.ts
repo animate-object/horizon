@@ -1,11 +1,15 @@
-import { clearAllBlockingRules } from "@/shared/lib/rules";
+import { blockAllSites, clearAllBlockingRules } from "@/shared/lib/rules";
 import {
   DataLoader,
   PastSession,
   PastSessionFactory,
 } from "@/shared/lib/datastore";
 import { AlarmType, Message, MessageType } from "@/shared/messages";
-import { SessionConfiguration } from "@/shared/session";
+import {
+  computeSessionEndEpoch,
+  computeSessionState,
+  SessionConfiguration,
+} from "@/shared/session";
 import { Storage } from "@/shared/storage";
 
 type MessageHandler = Parameters<
@@ -28,21 +32,6 @@ export const messageRoutingHandler: MessageHandler = (
   return true;
 };
 
-const UNIVERSAL_BLOCK_RULE: chrome.declarativeNetRequest.Rule = {
-  id: 1,
-  priority: 1,
-  action: {
-    type: "redirect",
-    redirect: {
-      extensionPath: "/src/pages/blocked.html",
-    },
-  },
-  condition: {
-    urlFilter: "*",
-    resourceTypes: ["main_frame"],
-  },
-};
-
 const handleSessionStarted = async () => {
   console.log("handling session start");
   const dataLoader = new DataLoader();
@@ -56,27 +45,7 @@ const handleSessionStarted = async () => {
     return;
   }
 
-  const sessionRules: chrome.declarativeNetRequest.Rule[] =
-    config.allowedToolUrls.map((toolDef, idx) => {
-      return {
-        id: idx + 2,
-        priority: 10,
-        action: { type: "allow" },
-        condition: {
-          urlFilter: `||${toolDef}`,
-          resourceTypes: ["main_frame"],
-        },
-      };
-    });
-
-  const rules = [UNIVERSAL_BLOCK_RULE, ...sessionRules];
-
-  console.log("Setting network request rules!", rules);
-  clearAllBlockingRules();
-
-  await chrome.declarativeNetRequest.updateDynamicRules({
-    addRules: rules,
-  });
+  await blockAllSites({ except: config.allowedToolUrls });
 
   chrome.alarms.create(AlarmType.sessionFinished, {
     delayInMinutes: config.durationMinutes,
@@ -96,6 +65,21 @@ const handleSessionStarted = async () => {
   dataLoader.upsert(pastSession);
 };
 
+const handleLandingViewed = async () => {
+  console.info("LandingViewHandler: handling");
+  const config = await Storage.get(Storage.keys.ActiveSessionConfig, undefined);
+  if (computeSessionState(config) != "active") {
+    console.info("LandingViewHandler: Session is not active");
+    const rules = await chrome.declarativeNetRequest.getDynamicRules();
+    if (rules.length === 1 && rules[0].id === 1) {
+      console.info("LandingViewHandler: URL Blocking state is correct");
+      return;
+    }
+    console.info("LandingViewHandler: Blocking all URLs");
+    await blockAllSites();
+  }
+};
+
 const handleKnownMessage = async (
   message: Message,
   _sendResponse: (message?: any) => void
@@ -103,6 +87,9 @@ const handleKnownMessage = async (
   switch (message.type) {
     case MessageType.sessionStarted:
       await handleSessionStarted();
+      return;
+    case MessageType.landingViewed:
+      await handleLandingViewed();
       return;
     default:
       console.warn("Unknown message type", message);

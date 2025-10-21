@@ -1,5 +1,6 @@
 export enum MessageType {
   sessionStarted = "session-started",
+  landingViewed = "landing-viewed",
 }
 
 export interface Message {
@@ -8,6 +9,7 @@ export interface Message {
 
 export const MessageBuilder = {
   sessionStarted: (): Message => ({ type: MessageType.sessionStarted }),
+  landingViewed: (): Message => ({ type: MessageType.landingViewed }),
 };
 
 export enum AlarmType {

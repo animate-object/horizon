@@ -5,6 +5,8 @@ import DevPanel from "@/shared/components/dev/DevPanel";
 import { ActiveSession } from "@/shared/components/session-views/ActiveSession";
 import { ConfigureSession } from "@/shared/components/session-views/ConfigureSession";
 import { SessionComplete } from "@/shared/components/session-views/SessionComplete";
+import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
+import { MessageBuilder } from "@/shared/messages";
 import {
   computeSessionState,
   SessionConfiguration,
@@ -26,6 +28,12 @@ type OnChangeListener = Parameters<
 
 function Landing() {
   const [sessionState, setSessionState] = useState<SessionState>("configure");
+  const browserTabActive = useIsBrowserTabActive();
+  useEffect(() => {
+    if (browserTabActive) {
+      chrome.runtime.sendMessage(MessageBuilder.landingViewed());
+    }
+  }, [browserTabActive]);
 
   useEffect(() => {
     Storage.get<SessionConfiguration | undefined>(
