@@ -32,6 +32,14 @@ export const messageRoutingHandler: MessageHandler = (
   return true;
 };
 
+const applyRulesForActiveSession = async (config: SessionConfiguration) => {
+  if (config.mode === "free") {
+    await clearAllBlockingRules();
+  } else {
+    await blockAllSites({ except: config.allowedToolUrls });
+  }
+};
+
 const handleSessionStarted = async () => {
   console.log("handling session start");
   const dataLoader = new DataLoader();
@@ -45,7 +53,7 @@ const handleSessionStarted = async () => {
     return;
   }
 
-  await blockAllSites({ except: config.allowedToolUrls });
+  await applyRulesForActiveSession(config);
 
   chrome.alarms.create(AlarmType.sessionFinished, {
     delayInMinutes: config.durationMinutes,

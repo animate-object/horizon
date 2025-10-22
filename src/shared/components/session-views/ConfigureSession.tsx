@@ -5,12 +5,95 @@ import { SessionConfiguration } from "@/shared/session";
 import { MessageBuilder } from "@/shared/messages";
 import Button from "../design/Button";
 import Text from "../design/Text";
-import { SessionTools } from "./SessionTools";
+import { SessionTools } from "../configure-session/SessionTools";
+import {
+  DURATION_CHOICES_LIMITED,
+  SelectDuration,
+} from "../configure-session/SelectDuration";
+import { useLocation } from "@/shared/hooks/useLocation";
+import { updateQuery } from "@/shared/lib/query";
+import { Tabs } from "../design/Tabs";
+import { isEmpty } from "lodash";
 
 const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
 
 const isValidToolDef = (toolUrl: string): boolean => {
   return TOOL_DOMAIN_REGEX.test(toolUrl);
+};
+
+const TABS = [
+  {
+    id: "standard",
+    label: "Session",
+  },
+  {
+    id: "free",
+    label: "Free Browse",
+  },
+];
+
+function StandardSessionSettings({
+  description,
+  tools,
+  onSetDescription,
+  onSetTools,
+}: {
+  description: string;
+  tools: string[];
+  onSetDescription: (d: string) => void;
+  onSetTools: React.Dispatch<React.SetStateAction<string[]>>;
+}) {
+  return (
+    <>
+      {" "}
+      <FormElementWrapper label="What are you here to do?">
+        <textarea
+          id="description"
+          className="textarea textarea-primary w-full"
+          value={description}
+          onChange={(evt) => {
+            onSetDescription(evt.currentTarget.value);
+          }}
+        />
+      </FormElementWrapper>
+      <FormElementWrapper label="What tools will you use?">
+        <SessionTools tools={tools} onUpdateTools={onSetTools} />
+      </FormElementWrapper>
+    </>
+  );
+}
+
+const validateFormState = ({
+  taskDescription,
+  tools,
+  duration,
+  sessionMode,
+}: {
+  taskDescription: string;
+  tools: string[];
+  duration: number | "not-selected";
+  sessionMode: "free" | "standard";
+}): {
+  tools: { empty: boolean; allValid: boolean };
+  isFormValid: boolean;
+} => {
+  if (sessionMode === "free") {
+    return {
+      tools: { empty: true, allValid: true },
+      isFormValid: typeof duration === "number",
+    };
+  }
+
+  const toolsEmpty = !tools.some((tool) => tool !== "");
+  const allToolsValid = tools.every(isValidToolDef);
+
+  const isFormValid =
+    allToolsValid &&
+    !toolsEmpty &&
+    duration !== "not-selected" &&
+    !isEmpty(taskDescription);
+
+  return { tools: { empty: toolsEmpty, allValid: allToolsValid }, isFormValid };
 };
 
 export function ConfigureSession() {
@@ -19,104 +102,93 @@ export function ConfigureSession() {
   const [duration, setDuration] = useState<number | "not-selected">(
     "not-selected"
   );
+  const { search } = useLocation();
+  const sessionMode: "free" | "standard" = useMemo(() => {
+    return new URLSearchParams(search).get("sessionMode") === "free"
+      ? "free"
+      : "standard";
+  }, [search]);
 
-  const allToolsEmpty = useMemo(
-    () => !tools.some((tool) => tool !== ""),
-    [tools]
-  );
-  const isAnyToolInvalid = useMemo(
-    () => tools.some((tool) => !isValidToolDef(tool)),
-    [tools]
-  );
-
-  const isFormValid = useMemo(
-    () =>
-      !isAnyToolInvalid &&
-      taskDescription !== "" &&
-      duration !== "not-selected",
-    [isAnyToolInvalid, taskDescription, duration]
+  const validation = useMemo(
+    () => validateFormState({ taskDescription, tools, duration, sessionMode }),
+    [taskDescription, tools, duration, sessionMode]
   );
 
   const handleSubmit = () => {
     if (duration === "not-selected") {
       return alert("Select duration");
     }
-    if (allToolsEmpty) {
+    if (!validation.isFormValid && validation.tools.empty) {
       return alert("Specify at least one tool");
     }
 
     const config: SessionConfiguration = {
-      taskDescription,
+      taskDescription:
+        sessionMode === "standard" ? taskDescription : "free browsing",
       durationMinutes: duration,
       startedAt: new Date().toISOString(),
-      allowedToolUrls: tools,
+      allowedToolUrls: sessionMode === "standard" ? tools : [],
+      mode: sessionMode,
     };
 
     Storage.set(Storage.keys.ActiveSessionConfig, config);
     chrome.runtime.sendMessage(MessageBuilder.sessionStarted());
   };
 
+  const handleChangeTab = (tabId: string) => {
+    if (tabId === "free") {
+      updateQuery({ sessionMode: "free" });
+    } else {
+      updateQuery({ sessionMode: "standard" });
+    }
+  };
+
   return (
-    <>
+    <div className="flex flex-col gap-y-2">
       <Text.Header>New Session</Text.Header>
-      <div className="flex flex-col items-center w-full h-full">
-        <div className="flex flex-col py-6 gap-2 w-full">
-          <FormElementWrapper label="What are you here to do?">
-            <textarea
-              id="description"
-              className="textarea textarea-primary w-full"
-              value={taskDescription}
-              onChange={(evt) => {
-                setTaskDescription(evt.currentTarget.value);
-              }}
-            />
-          </FormElementWrapper>
-          <FormElementWrapper label="What tools will you use?">
-            <SessionTools tools={tools} onUpdateTools={setTools} />
-          </FormElementWrapper>
-
-          <FormElementWrapper label="How long will you work?">
-            <select
-              className="select w-half"
-              value={duration}
-              onChange={(evt) => {
-                const value = evt.currentTarget.value;
-                if (value === "not-selected") {
-                  setDuration(value);
-                }
-                setDuration(parseInt(value));
-              }}
-            >
-              <option value="not-selected">--</option>
-              <option value="1">1 minutes (testing)</option>
-              <option value="5">5 minutes</option>
-              <option value="10">10 minutes</option>
-              <option value="30">30 minutes</option>
-              <option value="60">60 minutes</option>
-              <option value="90">90 minutes</option>
-              <option value="120">120 minutes</option>
-            </select>
-          </FormElementWrapper>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              rowGap: "1rem",
-              color: "red",
-            }}
-          >
-            {!allToolsEmpty && isAnyToolInvalid && (
+      <Tabs activeTabId={sessionMode} tabs={TABS} onChange={handleChangeTab} />
+      {sessionMode === "standard" && (
+        <>
+          <StandardSessionSettings
+            description={taskDescription}
+            tools={tools}
+            onSetDescription={setTaskDescription}
+            onSetTools={setTools}
+          />
+          <div className="flex flex-col gap-y-2 text-error">
+            {!validation.tools.empty && !validation.tools.allValid && (
               <span>One or more tools are not valid URLs</span>
             )}
           </div>
-          <div>
-            <Button onClick={handleSubmit} disabled={!isFormValid}>
-              Start session
-            </Button>
-          </div>
-        </div>
+        </>
+      )}
+
+      {sessionMode === "free" && (
+        <>
+          <Text.Body light>
+            Browse the internet without restrictions for a limited amount of
+            time
+          </Text.Body>
+          <div className="divider divider-accent my-0" />
+        </>
+      )}
+
+      <FormElementWrapper label="How long will you work?">
+        <SelectDuration
+          choices={
+            sessionMode === "free" ? DURATION_CHOICES_LIMITED : undefined
+          }
+          classNames={["w-half"]}
+          value={duration}
+          onChange={setDuration}
+        />
+      </FormElementWrapper>
+
+      <div>
+        <Button onClick={handleSubmit} disabled={!validation.isFormValid}>
+          Start session
+        </Button>
       </div>
-    </>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ export interface SessionConfiguration {
   durationMinutes: number;
   startedAt: string;
   allowedToolUrls: string[];
+  mode?: "standard" | "free";
 }
 export type SessionState = "configure" | "active" | "complete";
 
@@ -15,6 +16,12 @@ export const computeSessionEndEpoch = (
   const end = start + config.durationMinutes * 60 * 1000;
   return end;
 };
+
+export function getSessionMode(
+  config: SessionConfiguration
+): NonNullable<SessionConfiguration["mode"]> {
+  return config?.mode || "standard";
+}
 
 export const computeSessionState = (
   config?: SessionConfiguration

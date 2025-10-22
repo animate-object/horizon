@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import Button from "../design/Button";
 import { RemoveIcon } from "../icons/RemoveIcon";
-import { ToolTypeahead } from "../ToolTypeahead";
+import { ToolTypeahead } from "./ToolTypeahead";
 
 interface Props {
   tools: string[];
