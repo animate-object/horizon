@@ -4,7 +4,12 @@ import {
   PastSession,
   PastSessionFactory,
 } from "@/shared/lib/datastore";
-import { AlarmType, Message, MessageType } from "@/shared/messages";
+import {
+  AlarmType,
+  Message,
+  MessageType,
+  ResponseBuilder,
+} from "@/shared/messages";
 import {
   computeSessionEndEpoch,
   computeSessionState,
@@ -88,9 +93,16 @@ const handleLandingViewed = async () => {
   }
 };
 
+const handleEndSessionEarly = async (sendResponse: (message?: any) => void) => {
+  await Storage.clear(Storage.keys.ActiveSessionConfig);
+  await chrome.alarms.clear(AlarmType.sessionFinished);
+  await blockAllSites();
+  sendResponse(ResponseBuilder.taskComplete());
+};
+
 const handleKnownMessage = async (
   message: Message,
-  _sendResponse: (message?: any) => void
+  sendResponse: (message?: any) => void
 ) => {
   switch (message.type) {
     case MessageType.sessionStarted:
@@ -98,6 +110,9 @@ const handleKnownMessage = async (
       return;
     case MessageType.landingViewed:
       await handleLandingViewed();
+      return;
+    case MessageType.endSession:
+      await handleEndSessionEarly(sendResponse);
       return;
     default:
       console.warn("Unknown message type", message);

@@ -69,7 +69,9 @@ export function SessionTools({ tools, onUpdateTools }: Props) {
         );
       })}
       <div>
-        <Button onClick={handleAddTool}>+ Add another</Button>
+        <Button soft onClick={handleAddTool}>
+          + Add another
+        </Button>
       </div>
     </div>
   );

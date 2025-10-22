@@ -2,7 +2,8 @@ import { computeSessionEndEpoch, SessionConfiguration } from "@/shared/session";
 import { Storage } from "@/shared/storage";
 import { useEffect, useMemo, useState } from "react";
 import Text from "../design/Text";
-import { SessionDetails } from "../SessionDetails";
+import { SessionDetails } from "./SessionDetails";
+import { SessionActions } from "./SessionActions";
 
 function leftPadZeros(value: number | string, length: number): string {
   return String(value).padStart(length, "0");
@@ -79,7 +80,10 @@ export function ActiveSession() {
     <div className="flex flex-col gap-4">
       {sessionData && <SessionDetails {...sessionData} />}
 
-      <div className="inline-block self-end">
+      <div className="flex justify-between">
+        <div>
+          <SessionActions session={sessionData} />
+        </div>
         <Text.SubHeader>
           Time remaining&nbsp;
           <TimeRemainingClock timeRemainingSeconds={timeRemainingSeconds} />
