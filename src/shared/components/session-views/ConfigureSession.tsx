@@ -45,18 +45,26 @@ function StandardSessionSettings({
 }) {
   return (
     <>
-      {" "}
       <FormElementWrapper label="What are you here to do?">
         <textarea
           id="description"
-          className="textarea textarea-primary w-full"
+          className="textarea w-full"
           value={description}
           onChange={(evt) => {
             onSetDescription(evt.currentTarget.value);
           }}
         />
       </FormElementWrapper>
-      <FormElementWrapper label="What tools will you use?">
+      <FormElementWrapper
+        label={
+          <div className="flex justify-between items-center">
+            <Text.Body>What tools will you use?</Text.Body>
+            <Button color="primary" soft>
+              Browse toolsets
+            </Button>
+          </div>
+        }
+      >
         <SessionTools tools={tools} onUpdateTools={onSetTools} />
       </FormElementWrapper>
     </>
