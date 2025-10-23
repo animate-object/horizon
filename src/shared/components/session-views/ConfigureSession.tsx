@@ -1,19 +1,22 @@
 import { useMemo, useState } from "react";
 import { FormElementWrapper } from "../layout/form";
 import { Storage } from "@/shared/storage";
-import { SessionConfiguration } from "@/shared/session";
+import { SessionConfiguration, SessionMode } from "@/shared/session";
 import { MessageBuilder } from "@/shared/messages";
 import Button from "../design/Button";
 import Text from "../design/Text";
 import { SessionTools } from "../configure-session/SessionTools";
 import {
   DURATION_CHOICES_LIMITED,
+  DurationOption,
   SelectDuration,
 } from "../configure-session/SelectDuration";
 import { useLocation } from "@/shared/hooks/useLocation";
 import { updateQuery } from "@/shared/lib/query";
 import { Tabs } from "../design/Tabs";
 import { isEmpty } from "lodash";
+
+type SetToolsCb = React.Dispatch<React.SetStateAction<string[]>>;
 
 const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
 
@@ -41,7 +44,7 @@ function StandardSessionSettings({
   description: string;
   tools: string[];
   onSetDescription: (d: string) => void;
-  onSetTools: React.Dispatch<React.SetStateAction<string[]>>;
+  onSetTools: SetToolsCb;
 }) {
   return (
     <>
@@ -104,19 +107,26 @@ const validateFormState = ({
   return { tools: { empty: toolsEmpty, allValid: allToolsValid }, isFormValid };
 };
 
-export function ConfigureSession() {
-  const [taskDescription, setTaskDescription] = useState("");
-  const [tools, setTools] = useState<string[]>([""]);
-  const [duration, setDuration] = useState<number | "not-selected">(
-    "not-selected"
-  );
-  const { search } = useLocation();
-  const sessionMode: "free" | "standard" = useMemo(() => {
-    return new URLSearchParams(search).get("sessionMode") === "free"
-      ? "free"
-      : "standard";
-  }, [search]);
-
+interface FormProps {
+  sessionMode: SessionMode;
+  taskDescription: string;
+  tools: string[];
+  duration: DurationOption;
+  onChangeTaskDescription: (text: string) => void;
+  onSelectTab: (tab: SessionMode) => void;
+  onSetDuration: (duration: DurationOption) => void;
+  onSetTools: SetToolsCb;
+}
+function ConfigureSessionForm({
+  sessionMode,
+  taskDescription,
+  tools,
+  duration,
+  onChangeTaskDescription,
+  onSetTools,
+  onSetDuration,
+  onSelectTab,
+}: FormProps) {
   const validation = useMemo(
     () => validateFormState({ taskDescription, tools, duration, sessionMode }),
     [taskDescription, tools, duration, sessionMode]
@@ -143,25 +153,21 @@ export function ConfigureSession() {
     chrome.runtime.sendMessage(MessageBuilder.sessionStarted());
   };
 
-  const handleChangeTab = (tabId: string) => {
-    if (tabId === "free") {
-      updateQuery({ sessionMode: "free" });
-    } else {
-      updateQuery({ sessionMode: "standard" });
-    }
-  };
-
   return (
     <div className="flex flex-col gap-y-2">
       <Text.Header>New Session</Text.Header>
-      <Tabs activeTabId={sessionMode} tabs={TABS} onChange={handleChangeTab} />
+      <Tabs
+        activeTabId={sessionMode}
+        tabs={TABS}
+        onChange={(tabId) => onSelectTab(tabId as SessionMode)}
+      />
       {sessionMode === "standard" && (
         <>
           <StandardSessionSettings
             description={taskDescription}
             tools={tools}
-            onSetDescription={setTaskDescription}
-            onSetTools={setTools}
+            onSetDescription={onChangeTaskDescription}
+            onSetTools={onSetTools}
           />
           <div className="flex flex-col gap-y-2 text-error">
             {!validation.tools.empty && !validation.tools.allValid && (
@@ -188,7 +194,7 @@ export function ConfigureSession() {
           }
           classNames={["w-half"]}
           value={duration}
-          onChange={setDuration}
+          onChange={onSetDuration}
         />
       </FormElementWrapper>
 
@@ -197,6 +203,43 @@ export function ConfigureSession() {
           Start session
         </Button>
       </div>
+    </div>
+  );
+}
+
+export function ConfigureSession() {
+  const [taskDescription, setTaskDescription] = useState("");
+  const [tools, setTools] = useState<string[]>([""]);
+  const [duration, setDuration] = useState<number | "not-selected">(
+    "not-selected"
+  );
+  const { search } = useLocation();
+  const sessionMode: "free" | "standard" = useMemo(() => {
+    return new URLSearchParams(search).get("sessionMode") === "free"
+      ? "free"
+      : "standard";
+  }, [search]);
+
+  const handleChangeTab = (tabId: string) => {
+    if (tabId === "free") {
+      updateQuery({ sessionMode: "free" });
+    } else {
+      updateQuery({ sessionMode: "standard" });
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-y-2">
+      <ConfigureSessionForm
+        sessionMode={sessionMode}
+        taskDescription={taskDescription}
+        tools={tools}
+        duration={duration}
+        onChangeTaskDescription={setTaskDescription}
+        onSetTools={setTools}
+        onSetDuration={setDuration}
+        onSelectTab={handleChangeTab}
+      />
     </div>
   );
 }

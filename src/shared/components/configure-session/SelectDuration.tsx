@@ -1,8 +1,11 @@
 import clsx from "clsx";
 
+type NotSelected = "not-selected";
+export type DurationOption = number | NotSelected;
+
 interface Props {
-  value: number | "not-selected";
-  onChange: (value: number | "not-selected") => void;
+  value: DurationOption;
+  onChange: (value: DurationOption) => void;
   choices?: number[];
   classNames?: string[];
 }

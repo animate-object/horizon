@@ -1,5 +1,7 @@
 import { Storage } from "./storage";
 
+export type SessionMode = "free" | "standard";
+
 export interface SessionConfiguration {
   taskDescription: string;
   durationMinutes: number;
