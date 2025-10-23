@@ -15,6 +15,9 @@ import { useLocation } from "@/shared/hooks/useLocation";
 import { updateQuery } from "@/shared/lib/query";
 import { Tabs } from "../design/Tabs";
 import { isEmpty } from "lodash";
+import { ToolsetBrowser } from "../tools/ToolsetBrowser";
+import StartIcon from "../icons/StartIcon";
+import ToolsetsIcon from "../icons/ToolsetsIcon";
 
 type SetToolsCb = React.Dispatch<React.SetStateAction<string[]>>;
 
@@ -40,11 +43,13 @@ function StandardSessionSettings({
   tools,
   onSetDescription,
   onSetTools,
+  onBrowseToolsets,
 }: {
   description: string;
   tools: string[];
   onSetDescription: (d: string) => void;
   onSetTools: SetToolsCb;
+  onBrowseToolsets: VoidFunction;
 }) {
   return (
     <>
@@ -62,8 +67,8 @@ function StandardSessionSettings({
         label={
           <div className="flex justify-between items-center">
             <Text.Body>What tools will you use?</Text.Body>
-            <Button color="primary" soft>
-              Browse toolsets
+            <Button color="primary" soft onClick={onBrowseToolsets}>
+              <ToolsetsIcon /> Browse toolsets
             </Button>
           </div>
         }
@@ -168,6 +173,7 @@ function ConfigureSessionForm({
             tools={tools}
             onSetDescription={onChangeTaskDescription}
             onSetTools={onSetTools}
+            onBrowseToolsets={() => updateQuery({ modal: "tools" })}
           />
           <div className="flex flex-col gap-y-2 text-error">
             {!validation.tools.empty && !validation.tools.allValid && (
@@ -200,7 +206,7 @@ function ConfigureSessionForm({
 
       <div>
         <Button onClick={handleSubmit} disabled={!validation.isFormValid}>
-          Start session
+          <StartIcon /> Start session
         </Button>
       </div>
     </div>
@@ -214,11 +220,22 @@ export function ConfigureSession() {
     "not-selected"
   );
   const { search } = useLocation();
-  const sessionMode: "free" | "standard" = useMemo(() => {
-    return new URLSearchParams(search).get("sessionMode") === "free"
-      ? "free"
-      : "standard";
+  const {
+    sessionMode,
+    modalView,
+  }: {
+    sessionMode: SessionMode;
+    modalView?: "tools" | undefined;
+  } = useMemo(() => {
+    const params = new URLSearchParams(search);
+    const sessionMode =
+      params.get("sessionMode") === "free" ? "free" : "standard";
+    const modalView = params.get("modal") === "tools" ? "tools" : undefined;
+
+    return { sessionMode, modalView };
   }, [search]);
+  const showForm = modalView != "tools";
+  const showToolBrowser = modalView === "tools";
 
   const handleChangeTab = (tabId: string) => {
     if (tabId === "free") {
@@ -230,16 +247,21 @@ export function ConfigureSession() {
 
   return (
     <div className="flex flex-col gap-y-2">
-      <ConfigureSessionForm
-        sessionMode={sessionMode}
-        taskDescription={taskDescription}
-        tools={tools}
-        duration={duration}
-        onChangeTaskDescription={setTaskDescription}
-        onSetTools={setTools}
-        onSetDuration={setDuration}
-        onSelectTab={handleChangeTab}
-      />
+      {showForm && (
+        <ConfigureSessionForm
+          sessionMode={sessionMode}
+          taskDescription={taskDescription}
+          tools={tools}
+          duration={duration}
+          onChangeTaskDescription={setTaskDescription}
+          onSetTools={setTools}
+          onSetDuration={setDuration}
+          onSelectTab={handleChangeTab}
+        />
+      )}
+      {showToolBrowser && (
+        <ToolsetBrowser onBack={() => updateQuery({ modal: undefined })} />
+      )}
     </div>
   );
 }

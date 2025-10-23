@@ -1,7 +1,11 @@
-export const updateQuery = (params: Record<string, string>) => {
+export const updateQuery = (params: Record<string, string | undefined>) => {
   const searchParams = new URLSearchParams(window.location.search);
   Object.entries(params).forEach(([key, value]) => {
-    searchParams.set(key, value);
+    if (value === undefined) {
+      searchParams.delete(key);
+    } else {
+      searchParams.set(key, value);
+    }
   });
 
   history.pushState(

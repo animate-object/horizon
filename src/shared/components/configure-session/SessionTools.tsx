@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import Button from "../design/Button";
 import { RemoveIcon } from "../icons/RemoveIcon";
 import { ToolTypeahead } from "./ToolTypeahead";
+import AddIcon from "../icons/AddIcon";
 
 interface Props {
   tools: string[];
@@ -70,7 +71,7 @@ export function SessionTools({ tools, onUpdateTools }: Props) {
       })}
       <div>
         <Button ghost onClick={handleAddTool}>
-          + Add another
+          <AddIcon /> Add another
         </Button>
       </div>
     </div>

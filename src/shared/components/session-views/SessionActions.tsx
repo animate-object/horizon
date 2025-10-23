@@ -1,6 +1,7 @@
 import { computeSessionState, SessionConfiguration } from "@/shared/session";
 import Button from "../design/Button";
 import { MessageBuilder } from "@/shared/messages";
+import StopIcon from "../icons/StopIcon";
 
 export function SessionActions({
   session,
@@ -26,7 +27,7 @@ export function SessionActions({
   return (
     <>
       <Button soft color="destructive" onClick={handleEndSession}>
-        End session
+        <StopIcon /> End session
       </Button>
     </>
   );
