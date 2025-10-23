@@ -15,10 +15,12 @@ function TimeRemainingClock({
 }: {
   timeRemainingSeconds: number;
 }) {
+  const seconds = leftPadZeros((timeRemainingSeconds % 60).toFixed(0), 2);
+
   return (
     <code className="text-green-950 py-1 px-4 bg-green-100">
-      {Math.floor(timeRemainingSeconds / 60)}:
-      {leftPadZeros((timeRemainingSeconds % 60).toFixed(0), 2)}
+      {Math.floor(parseInt(timeRemainingSeconds.toFixed(0)) / 60)}:
+      {seconds === "60" ? "00" : seconds}
     </code>
   );
 }
