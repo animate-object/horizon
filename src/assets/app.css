@@ -121,3 +121,7 @@ a:active {
     width: 85%;
   }
 }
+
+.hidden {
+  visibility: hidden;
+}

@@ -16,10 +16,11 @@ const classForColor = (color: ButtonColor) => {
 interface Props extends Omit<React.ComponentProps<"button">, "className"> {
   color?: ButtonColor;
   soft?: boolean;
+  ghost?: boolean;
   circle?: boolean;
 }
 
-export default function Button({ color, circle, soft, ...rest }: Props) {
+export default function Button({ color, circle, soft, ghost, ...rest }: Props) {
   //   const className =
   //     "btn " + classForColor(color ?? "primary") + (circle ? " btn-circle" : "");
   const className = useMemo(() => {
@@ -27,6 +28,7 @@ export default function Button({ color, circle, soft, ...rest }: Props) {
     cls += classForColor(color ?? "primary") + " ";
     if (circle) cls += "btn-circle ";
     if (soft) cls += "btn-soft ";
+    if (ghost) cls += "btn-ghost font-light";
     return cls;
   }, [color, circle, soft]);
 

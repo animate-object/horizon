@@ -1,42 +1,16 @@
-import Text from "../design/Text";
-
 export function FormElementWrapper({
   label,
   children,
-}: React.PropsWithChildren & { label: string }) {
+}: React.PropsWithChildren & { label: React.ReactNode }) {
   return (
     <fieldset className="fieldset">
-      <legend className="text-sm">{label}</legend>
+      <div className="mb-1 w-full">
+        {typeof label === "string" && (
+          <legend className="text-sm">{label}</legend>
+        )}
+        {typeof label !== "string" && label}
+      </div>
       {children}
     </fieldset>
-  );
-}
-
-export function FormContainer({
-  children,
-  title,
-}: React.PropsWithChildren & { title: string }) {
-  return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text.SubHeader>{title}</Text.SubHeader>
-      <div
-        style={{
-          width: "50%",
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        {children}
-      </div>
-    </div>
   );
 }

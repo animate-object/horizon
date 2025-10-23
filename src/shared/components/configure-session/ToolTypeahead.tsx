@@ -66,13 +66,14 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
       onCreateOption={handleCreate}
       classNames={{
         container: () => "w-full",
-        control: () => "rounded-0 border-base-200 border-[0.5px] px-3",
-        menu: () => "rounded-0 border-primary border-[0.5px] bg-base-300 z-90",
+        control: () => "rounded-0 select w-full border-[0.5px] px-3",
+        menu: () => "rounded-0  border-[0.5px] bg-base-300 z-90",
         option: ({ isFocused, isSelected }) =>
           clsx("px-3 py-2 text-primary", {
-            "bg-base-200": isFocused,
-            "border-primary": isSelected,
+            "bg-base-200": isFocused || isSelected,
           }),
+
+        dropdownIndicator: () => "hidden",
       }}
       isClearable
       unstyled
