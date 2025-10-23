@@ -1,4 +1,4 @@
-import Layout from "@/shared/components/design/layout";
+import Layout from "@/shared/components/design/Layout";
 import Paper from "@/shared/components/design/Paper";
 import Root from "@/shared/components/design/Theme";
 import DevPanel from "@/shared/components/dev/DevPanel";
@@ -28,12 +28,12 @@ type OnChangeListener = Parameters<
 
 function Landing() {
   const [sessionState, setSessionState] = useState<SessionState>("configure");
-  const browserTabActive = useIsBrowserTabActive();
+  const { isTabVisible, lastTabActiveTime } = useIsBrowserTabActive();
   useEffect(() => {
-    if (browserTabActive) {
+    if (isTabVisible) {
       chrome.runtime.sendMessage(MessageBuilder.landingViewed());
     }
-  }, [browserTabActive]);
+  }, [isTabVisible, lastTabActiveTime]);
 
   useEffect(() => {
     Storage.get<SessionConfiguration | undefined>(

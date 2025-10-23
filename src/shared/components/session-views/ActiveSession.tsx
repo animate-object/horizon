@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Text from "../design/Text";
 import { SessionDetails } from "./SessionDetails";
 import { SessionActions } from "./SessionActions";
+import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
 
 function leftPadZeros(value: number | string, length: number): string {
   return String(value).padStart(length, "0");
@@ -24,29 +25,28 @@ function TimeRemainingClock({
 
 export function ActiveSession() {
   const [now, setNow] = useState<number>(Date.now());
-
-  const [sessionData, setSessionData] = useState<SessionConfiguration>();
+  const { lastTabActiveTime, isTabVisible } = useIsBrowserTabActive();
+  const [sessionData, setSessionData] = useState<
+    SessionConfiguration | undefined
+  >();
   const sessionEnd = useMemo(
     () => (sessionData ? computeSessionEndEpoch(sessionData) : undefined),
     [sessionData]
   );
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const config = await Storage.get<SessionConfiguration | undefined>(
+    if (isTabVisible) {
+      console.log("activessession: checking session state");
+      Storage.get<SessionConfiguration | undefined>(
         Storage.keys.ActiveSessionConfig,
         undefined
-      );
-      if (mounted && config) {
-        setSessionData(config);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+      ).then((data) => {
+        console.log("acctivesession: data", data);
+        if (data) setSessionData(data);
+        else window.location.reload();
+      });
+    }
+  }, [lastTabActiveTime, isTabVisible]);
 
   useEffect(() => {
     const interval = setInterval(() => {
