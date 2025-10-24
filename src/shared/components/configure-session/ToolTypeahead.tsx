@@ -3,12 +3,7 @@ import { DataLoader, ToolDefinition } from "../../lib/datastore";
 import CreatableSelect from "react-select/creatable";
 import { isEmpty } from "lodash";
 import clsx from "clsx";
-
-const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
-
-const isValidToolUrl = (toolUrl: string): boolean => {
-  return TOOL_DOMAIN_REGEX.test(toolUrl);
-};
+import { isValidToolUrl } from "@/shared/lib/tool";
 
 type CreatableProps = React.ComponentProps<typeof CreatableSelect>;
 
@@ -67,9 +62,9 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
       classNames={{
         container: () => "w-full",
         control: () => "rounded-0 select w-full border-[0.5px] px-3",
-        menu: () => "rounded-0  border-[0.5px] bg-base-300 z-90",
+        menu: () => "rounded-0 border-[0.5px] bg-base-300 z-90",
         option: ({ isFocused, isSelected }) =>
-          clsx("px-3 py-2 text-primary", {
+          clsx("px-3 py-2 text-primary z-90", {
             "bg-base-200": isFocused || isSelected,
           }),
 

@@ -8,8 +8,6 @@ interface Props extends React.PropsWithChildren {
   actions?: React.ReactNode;
 }
 
-const BACK = "<";
-
 export function InlineModal({ onBack, actions, title, children }: Props) {
   return (
     <div className="flex flex-col h-full justify-between items-start">

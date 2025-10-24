@@ -1,3 +1,4 @@
+import Button from "@/shared/components/design/Button";
 import Layout from "@/shared/components/design/Layout";
 import Paper from "@/shared/components/design/Paper";
 import Text from "@/shared/components/design/Text";
@@ -6,7 +7,7 @@ import DevPanel from "@/shared/components/dev/DevPanel";
 import { SessionActions } from "@/shared/components/session-views/SessionActions";
 import { SessionDetails } from "@/shared/components/session-views/SessionDetails";
 import { useSession } from "@/shared/hooks/useSession";
-import { computeSessionState } from "@/shared/session";
+import { clearSessionState, computeSessionState } from "@/shared/session";
 import { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 
@@ -20,9 +21,18 @@ function BlockedPage() {
           <div className="flex flex-col gap-4">
             <Text.Header>This page was blocked</Text.Header>
             {sessionState !== "active" && (
-              <Text.Body>
-                <a href="/src/pages/landing.html">Start new session</a>
-              </Text.Body>
+              <div>
+                <Button
+                  onClick={() => {
+                    clearSessionState();
+                    window.location.href = "/src/pages/landing.html";
+                  }}
+                  color="primary"
+                  ghost
+                >
+                  Start a new session
+                </Button>
+              </div>
             )}
             {sessionState === "active" && (
               <div className="flex flex-col gap-2">

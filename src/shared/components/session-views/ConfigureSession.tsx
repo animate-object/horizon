@@ -18,14 +18,9 @@ import { isEmpty } from "lodash";
 import { ToolsetBrowser } from "../tools/ToolsetBrowser";
 import StartIcon from "../icons/StartIcon";
 import ToolsetsIcon from "../icons/ToolsetsIcon";
+import { isValidToolUrl } from "@/shared/lib/tool";
 
 type SetToolsCb = React.Dispatch<React.SetStateAction<string[]>>;
-
-const TOOL_DOMAIN_REGEX = /^(?:\w+\.)+\w{2,}(?:\/\w*)*$/;
-
-const isValidToolDef = (toolUrl: string): boolean => {
-  return TOOL_DOMAIN_REGEX.test(toolUrl);
-};
 
 const TABS = [
   {
@@ -101,7 +96,7 @@ const validateFormState = ({
   }
 
   const toolsEmpty = !tools.some((tool) => tool !== "");
-  const allToolsValid = tools.every(isValidToolDef);
+  const allToolsValid = tools.every(isValidToolUrl);
 
   const isFormValid =
     allToolsValid &&
