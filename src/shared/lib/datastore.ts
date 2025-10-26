@@ -1,5 +1,5 @@
 import { debounce, keyBy, partition } from "lodash";
-import { Storage } from "@/shared/lib/storage";
+import { Storage, StorageKeys } from "@/shared/lib/storage";
 
 type EntityType = "tool" | "toolset" | "pastSession";
 type UUID = string;
@@ -119,58 +119,49 @@ export const PastSessionFactory = {
   ): PastSession => AuditableFactory.update({ ...session, ...args }),
 };
 
-type Datastore = Record<UUID, Entity>;
+type Datastore<E extends Entity> = Record<UUID, E>;
 
 const EMPTY_STORE = {};
 
-export class DataLoader {
-  private latest: Datastore | undefined;
+export class DataLoader<E extends Entity> {
+  private latest: Datastore<E> | undefined;
+  private key: StorageKeys;
 
-  constructor() {
+  constructor(key: StorageKeys) {
+    this.key = key;
     this.load();
   }
 
-  public async load(): Promise<Datastore> {
-    this.latest = await Storage.get<Datastore>(
-      Storage.keys.Datastore,
-      EMPTY_STORE
-    );
+  private async load(): Promise<Datastore<E>> {
+    this.latest = await Storage.get<Datastore<E>>(this.key, EMPTY_STORE);
     return this.latest;
   }
 
-  private write_ = async (dataStore: Datastore): Promise<void> => {
-    await Storage.set(Storage.keys.Datastore, dataStore);
+  private write_ = async (dataStore: Datastore<E>): Promise<void> => {
+    await Storage.set(this.key, dataStore);
     this.load();
     return;
   };
 
   public writeDebounced = debounce(this.write_, 500, { trailing: true });
 
-  public queueWrite = (dataStore: Datastore) => {
+  public queueWrite = (dataStore: Datastore<E>) => {
     this.latest = dataStore;
     this.writeDebounced(dataStore);
   };
 
-  public async getStore(): Promise<Datastore> {
+  public async getStore(): Promise<Datastore<E>> {
     if (this.latest == null) return this.load();
     return Promise.resolve(this.latest);
   }
 
-  public async get<T extends EntityType>(
-    id: UUID,
-    type: T
-  ): Promise<Extract<Entity, { type: T }> | undefined> {
+  public async get(id: UUID): Promise<E | undefined> {
     const store = await this.getStore();
-    const e = store[id];
-    if (e == null) return;
-    if (e.type === type) {
-      return e as Extract<Entity, { type: T }>;
-    }
-    throw Error(`Type mismatch for stored entity ${id} - ${e.type} != ${type}`);
+    return store[id] as E | undefined;
   }
 
-  public async upsert<E extends Entity>(e: E): Promise<E> {
-    await this.queueWrite({ ...this.latest, [e.id]: e });
+  public async upsert(e: E): Promise<E> {
+    this.queueWrite({ ...this.latest, [e.id]: e });
     return e;
   }
 
@@ -179,21 +170,27 @@ export class DataLoader {
     if (!store.hasOwnProperty(id)) return;
     delete store[id];
   }
+}
 
-  public async allToolDefinitions(
-    store_: Datastore | undefined = undefined
+export class ToolLoader extends DataLoader<ToolDefinition> {
+  constructor() {
+    super(StorageKeys.DatastoreTools);
+  }
+
+  public async listAll(
+    store_: Datastore<ToolDefinition> | undefined = undefined
   ): Promise<ToolDefinition[]> {
     const store = store_ ?? (await this.getStore());
     return Object.values(store).filter((e) => e.type === "tool");
   }
 
-  public async upsertToolDefinitions(
+  public async upsertMany(
     definitions: Array<{ url: string; name?: string; id?: string }>
   ): Promise<ToolDefinition[]> {
     const store = await this.getStore();
     const [known, unknown] = partition(definitions, (d) => d.id != null);
     const knownTools = known.map((d) => store[d.id!])!;
-    const otherDefs = await this.allToolDefinitions(store);
+    const otherDefs = await this.listAll(store);
     const lookup = keyBy(otherDefs, (def: ToolDefinition) => def.url);
 
     let upsertedDefinitions: ToolDefinition[] = [
@@ -214,5 +211,17 @@ export class DataLoader {
       );
     }
     return upsertedDefinitions;
+  }
+}
+
+export class PastSessionLoader extends DataLoader<PastSession> {
+  constructor() {
+    super(StorageKeys.DatastorePastSessions);
+  }
+}
+
+export class ToolsetLoader extends DataLoader<Toolset> {
+  constructor() {
+    super(StorageKeys.DatastoreToolsets);
   }
 }

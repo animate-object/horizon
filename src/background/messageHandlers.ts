@@ -1,8 +1,9 @@
 import { blockAllSites, clearAllBlockingRules } from "@/shared/lib/rules";
 import {
-  DataLoader,
   PastSession,
   PastSessionFactory,
+  PastSessionLoader,
+  ToolLoader,
 } from "@/shared/lib/datastore";
 import {
   AlarmType,
@@ -46,7 +47,7 @@ const applyRulesForActiveSession = async (config: SessionConfiguration) => {
 
 const handleSessionStarted = async () => {
   console.log("handling session start");
-  const dataLoader = new DataLoader();
+  const toolLoader = new ToolLoader();
 
   const config = await Storage.get<SessionConfiguration | undefined>(
     Storage.keys.ActiveSessionConfig,
@@ -63,7 +64,7 @@ const handleSessionStarted = async () => {
     delayInMinutes: config.durationMinutes,
   });
 
-  const toolDefinitions = await dataLoader.upsertToolDefinitions(
+  const toolDefinitions = await toolLoader.upsertMany(
     config.allowedToolUrls.map((url) => ({ url }))
   );
 
@@ -74,7 +75,7 @@ const handleSessionStarted = async () => {
     taskDescription: config.taskDescription,
   });
 
-  dataLoader.upsert(pastSession);
+  new PastSessionLoader().upsert(pastSession);
 };
 
 const handleLandingViewed = async () => {
