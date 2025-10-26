@@ -1,6 +1,6 @@
-import Button from "../design/Button";
-import Text from "../design/Text";
-import BackIcon from "../icons/BackIcon";
+import Button from "@/shared/components/design/Button";
+import Text from "@/shared/components/design/Text";
+import BackIcon from "@/shared/components/icons/BackIcon";
 
 interface Props extends React.PropsWithChildren {
   onBack: VoidFunction;

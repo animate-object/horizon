@@ -1,4 +1,4 @@
-import { Storage } from "./storage";
+import { Storage } from "@/shared/lib/storage";
 
 export type SessionMode = "free" | "standard";
 

@@ -1,23 +1,23 @@
 import { useMemo, useState } from "react";
-import { FormElementWrapper } from "../layout/form";
-import { Storage } from "@/shared/storage";
-import { SessionConfiguration, SessionMode } from "@/shared/session";
-import { MessageBuilder } from "@/shared/messages";
-import Button from "../design/Button";
-import Text from "../design/Text";
-import { SessionTools } from "../configure-session/SessionTools";
+import { FormElementWrapper } from "@/shared/components/layout/form";
+import { Storage } from "@/shared/lib/storage";
+import { SessionConfiguration, SessionMode } from "@/shared/lib/session";
+import { MessageBuilder } from "@/shared/lib/messages";
+import Button from "@/shared/components/design/Button";
+import Text from "@/shared/components/design/Text";
+import { SessionTools } from "@/shared/components/configure-session/SessionTools";
 import {
   DURATION_CHOICES_LIMITED,
   DurationOption,
   SelectDuration,
-} from "../configure-session/SelectDuration";
+} from "@/shared/components/configure-session/SelectDuration";
 import { useLocation } from "@/shared/hooks/useLocation";
 import { updateQuery } from "@/shared/lib/query";
-import { Tabs } from "../design/Tabs";
+import { Tabs } from "@/shared/components/design/Tabs";
 import { isEmpty } from "lodash";
-import { ToolsetBrowser } from "../tools/ToolsetBrowser";
-import StartIcon from "../icons/StartIcon";
-import ToolsetsIcon from "../icons/ToolsetsIcon";
+import { ToolsetBrowser } from "@/shared/components/tools/ToolsetBrowser";
+import StartIcon from "@/shared/components/icons/StartIcon";
+import ToolsetsIcon from "@/shared/components/icons/ToolsetsIcon";
 import { isValidToolUrl } from "@/shared/lib/tool";
 
 type SetToolsCb = React.Dispatch<React.SetStateAction<string[]>>;

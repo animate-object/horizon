@@ -6,13 +6,13 @@ import { ActiveSession } from "@/shared/components/session-views/ActiveSession";
 import { ConfigureSession } from "@/shared/components/session-views/ConfigureSession";
 import { SessionComplete } from "@/shared/components/session-views/SessionComplete";
 import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
-import { MessageBuilder } from "@/shared/messages";
+import { MessageBuilder } from "@/shared/lib/messages";
 import {
   computeSessionState,
   SessionConfiguration,
   SessionState,
-} from "@/shared/session";
-import { Storage } from "@/shared/storage";
+} from "@/shared/lib/session";
+import { Storage } from "@/shared/lib/storage";
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 

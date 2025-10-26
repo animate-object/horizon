@@ -1,7 +1,10 @@
-import { computeSessionState, SessionConfiguration } from "@/shared/session";
-import Button from "../design/Button";
-import { MessageBuilder } from "@/shared/messages";
-import StopIcon from "../icons/StopIcon";
+import {
+  computeSessionState,
+  SessionConfiguration,
+} from "@/shared/lib/session";
+import Button from "@/shared/components/design/Button";
+import { MessageBuilder } from "@/shared/lib/messages";
+import StopIcon from "@/shared/components/icons/StopIcon";
 
 export function SessionActions({
   session,

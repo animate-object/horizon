@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { DataLoader, ToolDefinition } from "../../lib/datastore";
+import { DataLoader, ToolDefinition } from "@/shared/lib/datastore";
 import CreatableSelect from "react-select/creatable";
 import { isEmpty } from "lodash";
 import clsx from "clsx";

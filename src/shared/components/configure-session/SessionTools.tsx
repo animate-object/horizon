@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import Button from "../design/Button";
-import { RemoveIcon } from "../icons/RemoveIcon";
-import { ToolTypeahead } from "./ToolTypeahead";
-import AddIcon from "../icons/AddIcon";
+import { ToolTypeahead } from "@/shared/components/configure-session/ToolTypeahead";
+import Button from "@/shared/components/design/Button";
+import RemoveIcon from "@/shared/components/icons/RemoveIcon";
+import AddIcon from "@/shared/components/icons/AddIcon";
 
 interface Props {
   tools: string[];

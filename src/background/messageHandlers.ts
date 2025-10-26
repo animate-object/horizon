@@ -9,13 +9,12 @@ import {
   Message,
   MessageType,
   ResponseBuilder,
-} from "@/shared/messages";
+} from "@/shared/lib/messages";
 import {
-  computeSessionEndEpoch,
   computeSessionState,
   SessionConfiguration,
-} from "@/shared/session";
-import { Storage } from "@/shared/storage";
+} from "@/shared/lib/session";
+import { Storage } from "@/shared/lib/storage";
 
 type MessageHandler = Parameters<
   typeof chrome.runtime.onMessage.addListener

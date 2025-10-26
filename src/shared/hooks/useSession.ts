@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Storage } from "../storage";
-import { SessionConfiguration } from "../session";
+import { Storage } from "@/shared/lib/storage";
+import { SessionConfiguration } from "@/shared/lib/session";
 
 interface UseSessionDataReturn {
   session: SessionConfiguration | undefined;

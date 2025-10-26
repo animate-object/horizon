@@ -1,10 +1,10 @@
 import { useSession } from "@/shared/hooks/useSession";
-import { MessageBuilder } from "@/shared/messages";
-import { clearSessionState } from "@/shared/session";
-import { Storage } from "@/shared/storage";
+import { MessageBuilder } from "@/shared/lib/messages";
+import { clearSessionState } from "@/shared/lib/session";
+import { Storage } from "@/shared/lib/storage";
 import { useState } from "react";
-import Button from "../design/Button";
-import Text from "../design/Text";
+import Button from "@/shared/components/design/Button";
+import Text from "@/shared/components/design/Text";
 
 export function SessionComplete() {
   const { session } = useSession();
