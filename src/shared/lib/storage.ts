@@ -1,7 +1,9 @@
-enum StorageKeys {
+export enum StorageKeys {
   ActiveSessionConfig = "active-session-config",
   HideDevPanelUntil = "hide-dev-panel-until",
-  Datastore = "datastore",
+  DatastoreTools = "datastore.tools",
+  DatastorePastSessions = "datastore.pastSessions",
+  DatastoreToolsets = "datastore.toolsets",
 }
 
 const set = (

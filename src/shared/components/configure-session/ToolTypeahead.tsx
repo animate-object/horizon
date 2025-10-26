@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { DataLoader, ToolDefinition } from "@/shared/lib/datastore";
+import { ToolDefinition, ToolLoader } from "@/shared/lib/datastore";
 import CreatableSelect from "react-select/creatable";
 import { isEmpty } from "lodash";
 import clsx from "clsx";
@@ -20,7 +20,7 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
   const [definitions, setDefinitions] = useState<ToolDefinition[]>([]);
   const [created, setCreated] = useState<Pick<ToolDefinition, "url">[]>([]);
   useEffect(() => {
-    new DataLoader().allToolDefinitions().then(setDefinitions);
+    new ToolLoader().listAll().then(setDefinitions);
   }, []);
 
   const handleCreate = useCallback(
