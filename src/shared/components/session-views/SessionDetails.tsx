@@ -1,5 +1,5 @@
-import { SessionConfiguration } from "@/shared/session";
-import Text from "../design/Text";
+import { SessionConfiguration } from "@/shared/lib/session";
+import Text from "@/shared/components/design/Text";
 
 export function SessionDetails({
   allowedToolUrls,

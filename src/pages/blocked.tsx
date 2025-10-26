@@ -7,7 +7,7 @@ import DevPanel from "@/shared/components/dev/DevPanel";
 import { SessionActions } from "@/shared/components/session-views/SessionActions";
 import { SessionDetails } from "@/shared/components/session-views/SessionDetails";
 import { useSession } from "@/shared/hooks/useSession";
-import { clearSessionState, computeSessionState } from "@/shared/session";
+import { clearSessionState, computeSessionState } from "@/shared/lib/session";
 import { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 

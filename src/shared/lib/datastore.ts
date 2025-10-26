@@ -1,5 +1,5 @@
 import { debounce, keyBy, partition } from "lodash";
-import { Storage } from "../storage";
+import { Storage } from "@/shared/lib/storage";
 
 type EntityType = "tool" | "toolset" | "pastSession";
 type UUID = string;

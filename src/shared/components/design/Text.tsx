@@ -1,7 +1,5 @@
 import clsx from "clsx";
 
-type TextColor = "primary" | "body" | "secondary" | "light";
-
 interface TextProps extends React.PropsWithChildren {
   light?: boolean;
 }

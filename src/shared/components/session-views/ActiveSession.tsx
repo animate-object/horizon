@@ -1,9 +1,12 @@
-import { computeSessionEndEpoch, SessionConfiguration } from "@/shared/session";
-import { Storage } from "@/shared/storage";
+import {
+  computeSessionEndEpoch,
+  SessionConfiguration,
+} from "@/shared/lib/session";
+import { Storage } from "@/shared/lib/storage";
 import { useEffect, useMemo, useState } from "react";
-import Text from "../design/Text";
-import { SessionDetails } from "./SessionDetails";
-import { SessionActions } from "./SessionActions";
+import Text from "@/shared/components/design/Text";
+import { SessionDetails } from "@/shared/components/session-views/SessionDetails";
+import { SessionActions } from "@/shared/components/session-views/SessionActions";
 import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
 
 function leftPadZeros(value: number | string, length: number): string {

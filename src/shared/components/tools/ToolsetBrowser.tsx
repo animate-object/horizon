@@ -1,6 +1,6 @@
 import { Toolset } from "@/shared/lib/datastore";
-import Text from "../design/Text";
-import { InlineModal } from "../layout/InlineModal";
+import Text from "@/shared/components/design/Text";
+import { InlineModal } from "@/shared/components/layout/InlineModal";
 
 interface Props {
   onBack: VoidFunction;

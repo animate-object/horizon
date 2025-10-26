@@ -1,5 +1,5 @@
-import { AlarmType } from "@/shared/messages";
-import { messageRoutingHandler } from "./messageHandlers";
+import { AlarmType } from "@/shared/lib/messages";
+import { messageRoutingHandler } from "@/background/messageHandlers";
 import { blockAllSites } from "@/shared/lib/rules";
 
 chrome.runtime.onInstalled.addListener(() => {

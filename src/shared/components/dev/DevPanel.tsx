@@ -1,15 +1,18 @@
+import { useSession } from "@/shared/hooks/useSession";
+import { clearAllBlockingRules } from "@/shared/lib/rules";
+import {
+  clearSessionState,
+  computeSessionEndEpoch,
+} from "@/shared/lib/session";
+import { Storage } from "@/shared/lib/storage";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Paper from "@/shared/components/design/Paper";
+import Text from "@/shared/components/design/Text";
+import Button from "@/shared/components/design/Button";
+
 const isDev = () => {
   return !("update_url" in chrome.runtime.getManifest());
 };
-
-import { useSession } from "@/shared/hooks/useSession";
-import { clearAllBlockingRules } from "@/shared/lib/rules";
-import { clearSessionState, computeSessionEndEpoch } from "@/shared/session";
-import { Storage } from "@/shared/storage";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import Paper from "../design/Paper";
-import Text from "../design/Text";
-import Button from "../design/Button";
 
 function JsonView({ data }: { data: object }) {
   return (
