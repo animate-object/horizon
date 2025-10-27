@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { ToolTypeahead } from "../configure-session/ToolTypeahead";
-import Button from "../design/Button";
-import AddIcon from "../icons/AddIcon";
-import RemoveIcon from "../icons/RemoveIcon";
+import { ToolTypeahead } from "@/shared/components/configure-session/ToolTypeahead";
+import Button from "@/shared/components/design/Button";
+import AddIcon from "@/shared/components/icons/AddIcon";
+import RemoveIcon from "@/shared/components/icons/RemoveIcon";
 import clsx from "clsx";
 
 interface Props {

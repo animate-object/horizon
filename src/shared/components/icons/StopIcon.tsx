@@ -2,17 +2,16 @@ export default function StopIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="none"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
+      fill="none"
       stroke="currentColor"
-      className="size-4"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z"
-      />
+      <rect width="18" height="18" x="3" y="3" rx="2" />
     </svg>
   );
 }

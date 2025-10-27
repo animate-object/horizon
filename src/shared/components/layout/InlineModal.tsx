@@ -10,7 +10,7 @@ interface Props extends React.PropsWithChildren {
 
 export function InlineModal({ onBack, actions, title, children }: Props) {
   return (
-    <div className="flex flex-col h-full justify-between items-start">
+    <div className="flex flex-col h-full justify-between items-start gap-2">
       <div className="flex flex-row w-full justify-center items-center">
         <Button
           role="button"

@@ -1,10 +1,6 @@
-import { useCallback, useState } from "react";
-import { ToolTypeahead } from "@/shared/components/configure-session/ToolTypeahead";
 import Button from "@/shared/components/design/Button";
-import RemoveIcon from "@/shared/components/icons/RemoveIcon";
-import AddIcon from "@/shared/components/icons/AddIcon";
-import ToolsetsIcon from "../icons/ToolsetsIcon";
-import { EditableToolList } from "../tools/EditableToolList";
+import { EditableToolList } from "@/shared/components/tools/EditableToolList";
+import SaveIcon from "@/shared/components/icons/SaveIcon";
 
 interface Props {
   tools: string[];
@@ -26,10 +22,11 @@ export function SessionTools({
       secondaryAuthoringAction={
         <Button
           color="secondary"
+          ghost
           onClick={onSaveAsToolset}
           disabled={!saveToolsetEnabled}
         >
-          <ToolsetsIcon /> Save as toolset
+          <SaveIcon /> Save as toolset
         </Button>
       }
     />

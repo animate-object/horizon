@@ -132,6 +132,15 @@ export class DataLoader<E extends Entity> {
     this.load();
   }
 
+  private async waitTilLoaded(maxAttempts = 10, timeout = 250): Promise<void> {
+    let attempts = 0;
+    while (this.latest == undefined && attempts < maxAttempts) {
+      await new Promise((resolve) => setTimeout(resolve, timeout));
+      attempts++;
+    }
+    return;
+  }
+
   private async load(): Promise<Datastore<E>> {
     this.latest = await Storage.get<Datastore<E>>(this.key, EMPTY_STORE);
     return this.latest;
@@ -161,6 +170,7 @@ export class DataLoader<E extends Entity> {
   }
 
   public async upsert(e: E): Promise<E> {
+    await this.waitTilLoaded();
     this.queueWrite({ ...this.latest, [e.id]: e });
     return e;
   }
