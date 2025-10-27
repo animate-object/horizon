@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FormElementWrapper } from "@/shared/components/layout/form";
 import { Storage } from "@/shared/lib/storage";
 import { SessionConfiguration, SessionMode } from "@/shared/lib/session";
@@ -18,7 +18,8 @@ import { isEmpty } from "lodash";
 import { ToolsetBrowser } from "@/shared/components/tools/ToolsetBrowser";
 import StartIcon from "@/shared/components/icons/StartIcon";
 import ToolsetsIcon from "@/shared/components/icons/ToolsetsIcon";
-import { isValidToolUrl } from "@/shared/lib/tool";
+import { isValidToolUrl, validateTools } from "@/shared/lib/tool";
+import { CreateToolsetModal } from "../tools/CreateToolsetModal";
 
 type SetToolsCb = React.Dispatch<React.SetStateAction<string[]>>;
 
@@ -36,15 +37,19 @@ const TABS = [
 function StandardSessionSettings({
   description,
   tools,
+  saveToolsetEnabled,
   onSetDescription,
   onSetTools,
   onBrowseToolsets,
+  onSaveAsToolset,
 }: {
   description: string;
   tools: string[];
+  saveToolsetEnabled: boolean;
   onSetDescription: (d: string) => void;
   onSetTools: SetToolsCb;
   onBrowseToolsets: VoidFunction;
+  onSaveAsToolset: VoidFunction;
 }) {
   return (
     <>
@@ -68,7 +73,12 @@ function StandardSessionSettings({
           </div>
         }
       >
-        <SessionTools tools={tools} onUpdateTools={onSetTools} />
+        <SessionTools
+          tools={tools}
+          saveToolsetEnabled={saveToolsetEnabled}
+          onUpdateTools={onSetTools}
+          onSaveAsToolset={onSaveAsToolset}
+        />
       </FormElementWrapper>
     </>
   );
@@ -95,16 +105,15 @@ const validateFormState = ({
     };
   }
 
-  const toolsEmpty = !tools.some((tool) => tool !== "");
-  const allToolsValid = tools.every(isValidToolUrl);
+  const toolValidation = validateTools(tools);
 
   const isFormValid =
-    allToolsValid &&
-    !toolsEmpty &&
+    toolValidation.allValid &&
+    !toolValidation.empty &&
     duration !== "not-selected" &&
     !isEmpty(taskDescription);
 
-  return { tools: { empty: toolsEmpty, allValid: allToolsValid }, isFormValid };
+  return { tools: toolValidation, isFormValid };
 };
 
 interface FormProps {
@@ -166,9 +175,13 @@ function ConfigureSessionForm({
           <StandardSessionSettings
             description={taskDescription}
             tools={tools}
+            saveToolsetEnabled={
+              validation.tools.allValid && !validation.tools.empty
+            }
             onSetDescription={onChangeTaskDescription}
             onSetTools={onSetTools}
             onBrowseToolsets={() => updateQuery({ modal: "tools" })}
+            onSaveAsToolset={() => updateQuery({ modal: "new-toolset" })}
           />
           <div className="flex flex-col gap-y-2 text-error">
             {!validation.tools.empty && !validation.tools.allValid && (
@@ -208,6 +221,14 @@ function ConfigureSessionForm({
   );
 }
 
+type Modals = "tools" | "new-toolset";
+
+const validModal = (
+  modalParam: string | undefined | null
+): modalParam is Modals => {
+  return modalParam === "tools" || modalParam === "new-toolset";
+};
+
 export function ConfigureSession() {
   const [taskDescription, setTaskDescription] = useState("");
   const [tools, setTools] = useState<string[]>([""]);
@@ -220,25 +241,31 @@ export function ConfigureSession() {
     modalView,
   }: {
     sessionMode: SessionMode;
-    modalView?: "tools" | undefined;
+    modalView?: "tools" | "new-toolset" | undefined;
   } = useMemo(() => {
     const params = new URLSearchParams(search);
     const sessionMode =
       params.get("sessionMode") === "free" ? "free" : "standard";
-    const modalView = params.get("modal") === "tools" ? "tools" : undefined;
+    const modalParam = params.get("modal");
+    const modalView = validModal(modalParam) ? modalParam : undefined;
 
     return { sessionMode, modalView };
   }, [search]);
-  const showForm = modalView != "tools";
+  const showForm = isEmpty(modalView);
   const showToolBrowser = modalView === "tools";
+  const showSaveAsToolset = modalView === "new-toolset";
 
-  const handleChangeTab = (tabId: string) => {
+  const handleChangeTab = useCallback((tabId: string) => {
     if (tabId === "free") {
       updateQuery({ sessionMode: "free" });
     } else {
       updateQuery({ sessionMode: "standard" });
     }
-  };
+  }, []);
+
+  const closeModal = useCallback(() => {
+    updateQuery({ modal: undefined });
+  }, []);
 
   return (
     <div className="flex flex-col gap-y-2">
@@ -254,8 +281,13 @@ export function ConfigureSession() {
           onSelectTab={handleChangeTab}
         />
       )}
-      {showToolBrowser && (
-        <ToolsetBrowser onBack={() => updateQuery({ modal: undefined })} />
+      {showToolBrowser && <ToolsetBrowser onBack={closeModal} />}
+      {showSaveAsToolset && (
+        <CreateToolsetModal
+          tools={tools}
+          onBack={closeModal}
+          onUpdateTools={setTools}
+        />
       )}
     </div>
   );
