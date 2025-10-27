@@ -1,18 +1,16 @@
 import {
-  ToolDefinition,
   ToolLoader,
-  Toolset,
   ToolsetFactory,
   ToolsetLoader,
 } from "@/shared/lib/datastore";
-import { InlineModal } from "../layout/InlineModal";
+import { InlineModal } from "@/shared/components/layout/InlineModal";
 import { useCallback, useMemo, useState } from "react";
-import Button from "../design/Button";
+import Button from "@/shared/components/design/Button";
 import { EditableToolList } from "./EditableToolList";
-import { FormElementWrapper } from "../layout/form";
+import { FormElementWrapper } from "@/shared/components/layout/form";
 import { validateTools } from "@/shared/lib/tool";
 import { isEmpty } from "lodash";
-import ToolsetsIcon from "../icons/ToolsetsIcon";
+import ToolsetsIcon from "@/shared/components/icons/ToolsetsIcon";
 
 interface Props {
   onBack: VoidFunction;
@@ -31,23 +29,24 @@ export function CreateToolsetModal({
 
   const handleCreateToolset = useCallback(async () => {
     try {
+      console.log("CreateToolsetModal: handle create toolset");
       const tools = await new ToolLoader().upsertMany(
         toolUrls.map((url) => ({ url }))
       );
-
-      await new ToolsetLoader().upsert(
-        ToolsetFactory.create({
-          toolIds: tools.map((t) => t.id),
-          name: name,
-        })
-      );
+      console.log("CreateToolsetModal: tools", tools);
+      const toolset = ToolsetFactory.create({
+        toolIds: tools.map((t) => t.id),
+        name: name,
+      });
+      await new ToolsetLoader().upsert(toolset);
+      console.log("CreateToolsetModal: created", toolset);
 
       onBack();
     } catch (err) {
       console.error("Failed to create toolset", err);
       alert("Something went wrong!");
     }
-  }, []);
+  }, [name, toolUrls]);
 
   return (
     <InlineModal

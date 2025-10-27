@@ -14,12 +14,13 @@ import {
 import { useLocation } from "@/shared/hooks/useLocation";
 import { updateQuery } from "@/shared/lib/query";
 import { Tabs } from "@/shared/components/design/Tabs";
-import { isEmpty } from "lodash";
+import { isEmpty, isNil } from "lodash";
 import { ToolsetBrowser } from "@/shared/components/tools/ToolsetBrowser";
 import StartIcon from "@/shared/components/icons/StartIcon";
 import ToolsetsIcon from "@/shared/components/icons/ToolsetsIcon";
-import { isValidToolUrl, validateTools } from "@/shared/lib/tool";
-import { CreateToolsetModal } from "../tools/CreateToolsetModal";
+import { validateTools } from "@/shared/lib/tool";
+import { CreateToolsetModal } from "@/shared/components/tools/CreateToolsetModal";
+import { ToolLoader, Toolset } from "@/shared/lib/datastore";
 
 type SetToolsCb = React.Dispatch<React.SetStateAction<string[]>>;
 
@@ -267,6 +268,17 @@ export function ConfigureSession() {
     updateQuery({ modal: undefined });
   }, []);
 
+  const handleSelectToolset = useCallback(
+    async (toolset: Toolset) => {
+      const loader = new ToolLoader();
+      const tools = await Promise.all(
+        toolset.toolIds.map(async (id) => await loader.get(id))
+      );
+      setTools(tools.filter((tool) => !isNil(tool)).map((tool) => tool.url));
+    },
+    [setTools]
+  );
+
   return (
     <div className="flex flex-col gap-y-2">
       {showForm && (
@@ -281,7 +293,12 @@ export function ConfigureSession() {
           onSelectTab={handleChangeTab}
         />
       )}
-      {showToolBrowser && <ToolsetBrowser onBack={closeModal} />}
+      {showToolBrowser && (
+        <ToolsetBrowser
+          onBack={closeModal}
+          onSelectToolset={handleSelectToolset}
+        />
+      )}
       {showSaveAsToolset && (
         <CreateToolsetModal
           tools={tools}

@@ -19,6 +19,7 @@ interface Props extends Omit<React.ComponentProps<"button">, "className"> {
   ghost?: boolean;
   circle?: boolean;
   noPad?: boolean;
+  small?: boolean;
 }
 
 export default function Button({
@@ -27,11 +28,13 @@ export default function Button({
   soft,
   ghost,
   noPad,
+  small,
   ...rest
 }: Props) {
   const className = useMemo(() => {
     let cls = "btn ";
     cls += classForColor(color ?? "primary") + " ";
+    if (small) cls += "btn-sm ";
     if (circle) cls += "btn-circle ";
     if (soft) cls += "btn-soft ";
     if (ghost) cls += "btn-ghost font-light ";
