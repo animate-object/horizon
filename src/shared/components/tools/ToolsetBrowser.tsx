@@ -1,27 +1,24 @@
-import { Toolset } from "@/shared/lib/datastore";
+import { ToolDefinition, ToolLoader, Toolset } from "@/shared/lib/datastore";
 import Text from "@/shared/components/design/Text";
 import { InlineModal } from "@/shared/components/layout/InlineModal";
+import { useEffect, useState } from "react";
 
 interface Props {
   onBack: VoidFunction;
 }
 
-const EXAMPLE_TOOLSETS: Pick<Toolset, "toolIds" | "name">[] = [
-  {
-    name: "Check messages",
-    toolIds: [],
-  },
-  {
-    name: "Check messages",
-    toolIds: [],
-  },
-  {
-    name: "Check messages",
-    toolIds: [],
-  },
-];
-
 export function ToolsetBrowser({ onBack }: Props) {
+  const [toolsets, setToolsets] = useState<Toolset[]>();
+  const [toolLookup, setToolLookup] =
+    useState<Record<string, ToolDefinition>>();
+
+  useEffect(() => {
+    const toolLoader = new ToolLoader();
+    toolLoader.getStore().then((tools) => {
+      setToolLookup(tools);
+    });
+  }, []);
+
   return (
     <InlineModal onBack={onBack} title="Browse Toolsets">
       <div className="min-h-80 w-full flex flex-col items-center justify-center">
