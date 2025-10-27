@@ -75,7 +75,7 @@ const handleSessionStarted = async () => {
     taskDescription: config.taskDescription,
   });
 
-  new PastSessionLoader().upsert(pastSession);
+  await new PastSessionLoader().addRecentSession(pastSession);
 };
 
 const handleLandingViewed = async () => {

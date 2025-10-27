@@ -1,4 +1,4 @@
-import { debounce, keyBy, partition } from "lodash";
+import { debounce, keyBy, orderBy, partition, take, values } from "lodash";
 import { Storage, StorageKeys } from "@/shared/lib/storage";
 
 type EntityType = "tool" | "toolset" | "pastSession";
@@ -146,11 +146,15 @@ export class DataLoader<E extends Entity> {
     return this.latest;
   }
 
-  private write_ = async (dataStore: Datastore<E>): Promise<void> => {
+  private async write_(dataStore: Datastore<E>): Promise<void> {
     await Storage.set(this.key, dataStore);
     this.load();
     return;
-  };
+  }
+
+  protected async setLatest(datastore: Datastore<E>) {
+    this.latest = datastore;
+  }
 
   public writeDebounced = debounce(this.write_, 500, { trailing: true });
 
@@ -227,6 +231,22 @@ export class ToolLoader extends DataLoader<ToolDefinition> {
 export class PastSessionLoader extends DataLoader<PastSession> {
   constructor() {
     super(StorageKeys.DatastorePastSessions);
+  }
+
+  public async recentSessions(count: number = 50): Promise<PastSession[]> {
+    const data = await this.getStore();
+    const sorted = orderBy(values(data), ["startedAt"], ["desc"]);
+    const trimmed = take(sorted, count);
+    return trimmed;
+  }
+
+  public async addRecentSession(
+    session: PastSession,
+    keep: number = 50
+  ): Promise<void> {
+    const recent = await this.recentSessions(keep - 1);
+    this.setLatest(keyBy(recent, (session) => session.id));
+    this.upsert(session);
   }
 }
 
