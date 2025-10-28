@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 type TimeRemainingStatus = "init" | "complete" | "active";
 
-interface UseCountdownReturn {
+export interface UseCountdownReturn {
   status: TimeRemainingStatus;
   timeRemainingSeconds: number;
 }
@@ -27,7 +27,7 @@ export function useCountdown({
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [countdownEnd]);
 
   const { timeRemainingSeconds, status }: UseCountdownReturn = useMemo(() => {
     if (countdownEnd == undefined) {

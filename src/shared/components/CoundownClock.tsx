@@ -18,9 +18,11 @@ export function CountdownClock({
   const seconds = leftPadZeros((timeRemainingSeconds % 60).toFixed(0), 2);
 
   return (
-    <code className={clsx("py-1 px-4", color, textColor)}>
-      {Math.floor(parseInt(timeRemainingSeconds.toFixed(0)) / 60)}:
-      {seconds === "60" ? "00" : seconds}
-    </code>
+    <span>
+      <code className={clsx("py-1 px-4", color, textColor)}>
+        {Math.floor(parseInt(timeRemainingSeconds.toFixed(0)) / 60)}:
+        {seconds === "60" ? "00" : seconds}
+      </code>
+    </span>
   );
 }

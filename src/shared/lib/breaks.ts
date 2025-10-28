@@ -2,6 +2,7 @@ import { PastSession, PastSessionLoader } from "./datastore";
 import { computeSessionEndEpoch, SessionMode } from "@/shared/lib/session";
 import { epochToIso, isoDateToEpoch, minutesAgo } from "./time";
 import { Storage, StorageKeys } from "./storage";
+import { isEqual } from "lodash";
 
 type BreakDuration = Record<SessionMode, number>;
 
@@ -81,7 +82,14 @@ export function computeNextBreak(
     return undefined;
   }
   const lastSession = recentSessions[0];
-  const endOfLastSessionEpoch = computeSessionEndEpoch(lastSession);
+
+  let endOflastSessionISO;
+  if (lastSession.endedEarlyAt) {
+    console.info("Break: Last session ended early");
+    endOflastSessionISO = lastSession.endedEarlyAt;
+  } else {
+    endOflastSessionISO = epochToIso(computeSessionEndEpoch(lastSession));
+  }
 
   const baseDuration: BreakDuration = { free: 0, standard: 0 };
 
@@ -101,17 +109,27 @@ export function computeNextBreak(
     return undefined;
   }
 
+  console.info("Break: computed ", { duration, endOflastSessionISO });
+
   return {
     durationMinutes: duration,
-    startedAt: epochToIso(endOfLastSessionEpoch),
+    startedAt: endOflastSessionISO,
   };
 }
 
-export async function setNextBreak() {
+export async function setNextBreakIfNeeded() {
   const sessions = await new PastSessionLoader().recentSessions(50);
 
   const nextBreak = computeNextBreak(sessions);
-  if (nextBreak == null) return;
 
-  Storage.set(StorageKeys.Break, nextBreak);
+  if (nextBreak == null) return;
+  const currentBreak = await Storage.get<Break>(StorageKeys.Break);
+  if (currentBreak == null) {
+    console.info("Break: Setting break, no previous break");
+    Storage.set(StorageKeys.Break, nextBreak);
+  } else if (!isEqual(currentBreak, nextBreak)) {
+    console.info("Break: Setting break, replacing previous", currentBreak);
+    Storage.set(StorageKeys.Break, nextBreak);
+  }
+  console.info("Break: Not setting break");
 }

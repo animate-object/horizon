@@ -33,6 +33,7 @@ export interface PastSession extends BaseEntity, Auditable {
   durationMinutes: number;
   startedAt: ISO8601Date;
   toolIds: UUID[];
+  endedEarlyAt?: ISO8601Date;
   mode: "standard" | "free";
 }
 
@@ -177,6 +178,12 @@ export class DataLoader<E extends Entity> {
   public async upsert(e: E): Promise<E> {
     await this.waitTilLoaded();
     this.queueWrite({ ...this.latest, [e.id]: e });
+    return e;
+  }
+
+  public async waitForUpsert(e: E): Promise<E> {
+    await this.waitTilLoaded();
+    await this.write_({ ...this.latest, [e.id]: e });
     return e;
   }
 

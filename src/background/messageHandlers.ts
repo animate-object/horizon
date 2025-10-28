@@ -95,6 +95,18 @@ const handleLandingViewed = async () => {
 };
 
 const handleEndSessionEarly = async (sendResponse: (message?: any) => void) => {
+  const sessionLoader = new PastSessionLoader();
+  const lastSessions = await sessionLoader.recentSessions(1);
+  if (lastSessions.length > 0) {
+    const lastSession = lastSessions[0];
+    console.info("messageHandler", lastSession.taskDescription);
+
+    const updated = PastSessionFactory.update(lastSession, {
+      endedEarlyAt: new Date().toISOString(),
+    });
+    await sessionLoader.waitForUpsert(updated);
+  }
+
   await Storage.clear(Storage.keys.ActiveSessionConfig);
   await chrome.alarms.clear(AlarmType.sessionFinished);
   await blockAllSites();
