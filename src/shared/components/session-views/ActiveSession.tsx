@@ -3,33 +3,15 @@ import {
   SessionConfiguration,
 } from "@/shared/lib/session";
 import { Storage } from "@/shared/lib/storage";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Text from "@/shared/components/design/Text";
 import { SessionDetails } from "@/shared/components/session-views/SessionDetails";
 import { SessionActions } from "@/shared/components/session-views/SessionActions";
 import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
-
-function leftPadZeros(value: number | string, length: number): string {
-  return String(value).padStart(length, "0");
-}
-
-function TimeRemainingClock({
-  timeRemainingSeconds,
-}: {
-  timeRemainingSeconds: number;
-}) {
-  const seconds = leftPadZeros((timeRemainingSeconds % 60).toFixed(0), 2);
-
-  return (
-    <code className="text-green-950 py-1 px-4 bg-green-100">
-      {Math.floor(parseInt(timeRemainingSeconds.toFixed(0)) / 60)}:
-      {seconds === "60" ? "00" : seconds}
-    </code>
-  );
-}
+import { CountdownClock } from "../CoundownClock";
+import { useCountdown } from "@/shared/hooks/useCountdown";
 
 export function ActiveSession() {
-  const [now, setNow] = useState<number>(Date.now());
   const { lastTabActiveTime, isTabVisible } = useIsBrowserTabActive();
   const [sessionData, setSessionData] = useState<
     SessionConfiguration | undefined
@@ -38,6 +20,17 @@ export function ActiveSession() {
     () => (sessionData ? computeSessionEndEpoch(sessionData) : undefined),
     [sessionData]
   );
+
+  const handleComplete = useCallback(() => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  }, []);
+
+  const { timeRemainingSeconds, status } = useCountdown({
+    countdownEnd: sessionEnd,
+    onComplete: handleComplete,
+  });
 
   useEffect(() => {
     if (isTabVisible) {
@@ -53,34 +46,8 @@ export function ActiveSession() {
     }
   }, [lastTabActiveTime, isTabVisible]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(Date.now());
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
-  const timeRemainingSeconds: "loading" | "complete" | number = useMemo(() => {
-    if (sessionEnd == null) return "loading";
-    const remainingMs = sessionEnd - now;
-    if (remainingMs < 0) return "complete";
-
-    return remainingMs / 1000;
-  }, [now, sessionEnd]);
-
-  useEffect(() => {
-    if (timeRemainingSeconds === "complete") {
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  }, [timeRemainingSeconds]);
-
-  if (timeRemainingSeconds === "loading") return "Loading";
-  if (timeRemainingSeconds === "complete")
-    return <Text.Header>"Complete"</Text.Header>;
+  if (status === "init") return "Loading";
+  if (status === "complete") return <Text.Header>Complete</Text.Header>;
   return (
     <div className="flex flex-col gap-4">
       {sessionData && <SessionDetails {...sessionData} />}
@@ -91,7 +58,7 @@ export function ActiveSession() {
         </div>
         <Text.SubHeader>
           Time remaining&nbsp;
-          <TimeRemainingClock timeRemainingSeconds={timeRemainingSeconds} />
+          <CountdownClock timeRemainingSeconds={timeRemainingSeconds} />
         </Text.SubHeader>
       </div>
     </div>
