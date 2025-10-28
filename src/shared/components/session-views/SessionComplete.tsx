@@ -39,7 +39,7 @@ export function SessionComplete() {
             window.location.reload();
           }}
         >
-          New sesion
+          New session
         </Button>
       </span>
 

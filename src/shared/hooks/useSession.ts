@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Storage } from "@/shared/lib/storage";
+import { StorageKeys } from "@/shared/lib/storage";
 import { SessionConfiguration } from "@/shared/lib/session";
+import { useStorageSlice } from "./useStorageSlice";
 
 interface UseSessionDataReturn {
   session: SessionConfiguration | undefined;
@@ -8,34 +8,8 @@ interface UseSessionDataReturn {
 }
 
 export function useSession(): UseSessionDataReturn {
-  const [sessionData, setSessionData] = useState<
-    SessionConfiguration | undefined
-  >();
-  const [lastChange, setLastChange] = useState(new Date().toISOString());
-  useEffect(() => {
-    const listener: Parameters<
-      typeof chrome.storage.onChanged.addListener
-    >[0] = (changes, area) => {
-      if (area !== "local") return;
-      const activeSessionConfig =
-        changes[Storage.keys.ActiveSessionConfig]?.newValue;
-
-      if (activeSessionConfig) {
-        setSessionData(activeSessionConfig);
-      }
-      setLastChange(lastChange);
-    };
-    chrome.storage.onChanged.addListener(listener);
-    return () => {
-      chrome.storage.onChanged.removeListener(listener);
-    };
-  }, []);
-
-  useEffect(() => {
-    Storage.get(Storage.keys.ActiveSessionConfig, undefined).then((data) => {
-      setSessionData(data);
-    });
-  });
+  const { data: sessionData, lastChange } =
+    useStorageSlice<SessionConfiguration>(StorageKeys.ActiveSessionConfig);
 
   return { session: sessionData, lastChange };
 }

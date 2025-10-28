@@ -73,6 +73,7 @@ const handleSessionStarted = async () => {
     durationMinutes: config.durationMinutes,
     toolIds: toolDefinitions.map((td) => td.id),
     taskDescription: config.taskDescription,
+    mode: config.mode ?? "standard",
   });
 
   await new PastSessionLoader().addRecentSession(pastSession);

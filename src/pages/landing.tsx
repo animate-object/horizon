@@ -5,61 +5,41 @@ import DevPanel from "@/shared/components/dev/DevPanel";
 import { ActiveSession } from "@/shared/components/session-views/ActiveSession";
 import { ConfigureSession } from "@/shared/components/session-views/ConfigureSession";
 import { SessionComplete } from "@/shared/components/session-views/SessionComplete";
+import { useSession } from "@/shared/hooks/useSession";
 import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
 import { MessageBuilder } from "@/shared/lib/messages";
-import {
-  computeSessionState,
-  SessionConfiguration,
-  SessionState,
-} from "@/shared/lib/session";
-import { Storage } from "@/shared/lib/storage";
-import { useEffect, useState } from "react";
+import { computeSessionState, SessionState } from "@/shared/lib/session";
+import { useEffect, useMemo } from "react";
 import ReactDOM from "react-dom/client";
 
-const SessionPages: Record<SessionState, React.ReactNode> = {
+type AppState = SessionState;
+
+const SessionPages: Record<AppState, React.ReactNode> = {
   configure: <ConfigureSession />,
   active: <ActiveSession />,
   complete: <SessionComplete />,
 };
 
-type OnChangeListener = Parameters<
-  typeof chrome.storage.onChanged.addListener
->[0];
-
 function Landing() {
-  const [sessionState, setSessionState] = useState<SessionState>("configure");
+  const { session } = useSession();
   const { isTabVisible, lastTabActiveTime } = useIsBrowserTabActive();
+  const sessionState = useMemo(() => computeSessionState(session), [session]);
+
   useEffect(() => {
     if (isTabVisible) {
       chrome.runtime.sendMessage(MessageBuilder.landingViewed());
     }
   }, [isTabVisible, lastTabActiveTime]);
 
-  useEffect(() => {
-    Storage.get<SessionConfiguration | undefined>(
-      Storage.keys.ActiveSessionConfig,
-      undefined
-    ).then((config) => {
-      console.log("initial state", config);
-      setSessionState(computeSessionState(config));
-    });
-  }, []);
+  const appState = useMemo(() => {
+    // TODO combine with break state
+    return sessionState;
+  }, [
+    sessionState,
+    // TODO - get breakState
+  ]);
 
-  useEffect(() => {
-    const listener: OnChangeListener = (changes, area) => {
-      if (area !== "local") return;
-      const activeSessionConfig = changes[Storage.keys.ActiveSessionConfig];
-      if (activeSessionConfig?.newValue) {
-        setSessionState(computeSessionState(activeSessionConfig.newValue));
-      }
-    };
-    chrome.storage.onChanged.addListener(listener);
-    return () => {
-      chrome.storage.onChanged.removeListener(listener);
-    };
-  }, []);
-
-  const page = SessionPages[sessionState];
+  const page = SessionPages[appState];
 
   return (
     <Root>

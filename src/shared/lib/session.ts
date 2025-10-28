@@ -12,7 +12,7 @@ export interface SessionConfiguration {
 export type SessionState = "configure" | "active" | "complete";
 
 export const computeSessionEndEpoch = (
-  config: SessionConfiguration
+  config: Pick<SessionConfiguration, "durationMinutes" | "startedAt">
 ): number => {
   const start = new Date(config.startedAt).getTime();
   const end = start + config.durationMinutes * 60 * 1000;

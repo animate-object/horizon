@@ -4,6 +4,7 @@ export enum StorageKeys {
   DatastoreTools = "datastore.tools",
   DatastorePastSessions = "datastore.pastSessions",
   DatastoreToolsets = "datastore.toolsets",
+  Break = "break",
 }
 
 const set = (

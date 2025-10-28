@@ -33,6 +33,7 @@ export interface PastSession extends BaseEntity, Auditable {
   durationMinutes: number;
   startedAt: ISO8601Date;
   toolIds: UUID[];
+  mode: "standard" | "free";
 }
 
 export type Entity = ToolDefinition | Toolset | PastSession;
