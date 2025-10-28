@@ -42,16 +42,18 @@ export function ToolsetBrowser({ onBack, onSelectToolset }: Props) {
 
   return (
     <InlineModal onBack={onBack} title="Browse Toolsets">
-      <div className="min-h-80 w-full flex flex-wrap justify-start items-start gap-2">
-        {toolsetList.map((ts) => (
-          <ToolsetBrowserCard
-            toolset={ts}
-            onSelectToolset={(ts) => {
-              onSelectToolset(ts);
-              onBack();
-            }}
-          />
-        ))}
+      <div className="min-h-80">
+        <div className="w-full flex flex-wrap gap-2">
+          {toolsetList.map((ts) => (
+            <ToolsetBrowserCard
+              toolset={ts}
+              onSelectToolset={(ts) => {
+                onSelectToolset(ts);
+                onBack();
+              }}
+            />
+          ))}
+        </div>
       </div>
     </InlineModal>
   );

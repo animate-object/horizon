@@ -5,9 +5,12 @@ import { useSession } from "./useSession";
 import { useStorageSlice } from "./useStorageSlice";
 import { computeSessionState, SessionMode } from "../lib/session";
 import { useCountdown, UseCountdownReturn } from "./useCountdown";
-import { isoDateToEpoch } from "../lib/time";
+import { isoDateToEpoch, minutesToMs } from "../lib/time";
+import { prefixLogger } from "../lib/log";
 
 type UseBreakReturn = Record<SessionMode, UseCountdownReturn>;
+
+const logger = prefixLogger("useBreak");
 
 export function useBreak(): UseBreakReturn {
   const { data: breakData } = useStorageSlice<Break>(StorageKeys.Break);
@@ -25,9 +28,11 @@ export function useBreak(): UseBreakReturn {
       const { free: freeMinutes, standard: standardMinutes } =
         breakData.durationMinutes;
 
-      const free = isoDateToEpoch(breakData.startedAt) + freeMinutes * 60 * 100;
-      const standard =
-        isoDateToEpoch(breakData.startedAt) + standardMinutes * 60 * 100;
+      const breakStartEpoch = isoDateToEpoch(breakData.startedAt);
+
+      const free = breakStartEpoch + minutesToMs(freeMinutes);
+      const standard = breakStartEpoch + minutesToMs(standardMinutes);
+
       return { free, standard };
     }
   }, [

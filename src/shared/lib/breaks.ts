@@ -3,6 +3,9 @@ import { computeSessionEndEpoch, SessionMode } from "@/shared/lib/session";
 import { epochToIso, isoDateToEpoch, minutesAgo } from "./time";
 import { Storage, StorageKeys } from "./storage";
 import { isEqual } from "lodash";
+import { prefixLogger } from "./log";
+
+const logger = prefixLogger("breaks:");
 
 type BreakDuration = Record<SessionMode, number>;
 
@@ -28,14 +31,13 @@ function recentSessionCountPenalty(
   let duration: number;
   if (sessionsInLastHour < 1) {
     duration = 0;
-  }
-  if (sessionsInLastHour > 10) {
+  } else if (sessionsInLastHour > 10) {
     duration = 3;
-  }
-  if (sessionsInLastHour > 5) {
+  } else if (sessionsInLastHour > 5) {
     duration = 2;
+  } else {
+    duration = 1;
   }
-  duration = 1;
 
   return {
     free: duration,
@@ -52,7 +54,7 @@ function lastSessionLengthPenalty(
 
   const lastSession = recentSessions[0];
 
-  if (lastSession.durationMinutes > 60) {
+  if (lastSession.durationMinutes >= 60) {
     return { free: 2, standard: 2 };
   } else {
     return { free: 0, standard: 0 };
@@ -79,17 +81,21 @@ export function computeNextBreak(
   recentSessions: PastSession[]
 ): Break | undefined {
   if (recentSessions.length < 1) {
+    logger.info("No previous session");
     return undefined;
   }
   const lastSession = recentSessions[0];
+  logger.info("Last session", lastSession);
 
   let endOflastSessionISO;
   if (lastSession.endedEarlyAt) {
-    console.info("Break: Last session ended early");
     endOflastSessionISO = lastSession.endedEarlyAt;
   } else {
     endOflastSessionISO = epochToIso(computeSessionEndEpoch(lastSession));
   }
+  logger.info(
+    `End of last session: ${new Date(endOflastSessionISO).toLocaleTimeString()}`
+  );
 
   const baseDuration: BreakDuration = { free: 0, standard: 0 };
 
@@ -105,16 +111,27 @@ export function computeNextBreak(
     };
   }, baseDuration);
 
+  logger.info("Computed break duration", duration);
+
   if (duration.free === 0 && duration.standard === 0) {
+    logger.info("No break needed, duration 0");
     return undefined;
   }
 
-  console.info("Break: computed ", { duration, endOflastSessionISO });
-
-  return {
+  const break_ = {
     durationMinutes: duration,
     startedAt: endOflastSessionISO,
   };
+
+  logger.info(
+    `Computed standard=${duration.standard}m free=${
+      duration.free
+    } break starting at ${new Date(
+      endOflastSessionISO
+    ).toLocaleTimeString()} - current time is ${new Date().toLocaleTimeString()}`
+  );
+
+  return break_;
 }
 
 export async function setNextBreakIfNeeded() {
@@ -125,11 +142,8 @@ export async function setNextBreakIfNeeded() {
   if (nextBreak == null) return;
   const currentBreak = await Storage.get<Break>(StorageKeys.Break);
   if (currentBreak == null) {
-    console.info("Break: Setting break, no previous break");
     Storage.set(StorageKeys.Break, nextBreak);
   } else if (!isEqual(currentBreak, nextBreak)) {
-    console.info("Break: Setting break, replacing previous", currentBreak);
     Storage.set(StorageKeys.Break, nextBreak);
   }
-  console.info("Break: Not setting break");
 }

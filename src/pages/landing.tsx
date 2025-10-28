@@ -4,7 +4,7 @@ import Root from "@/shared/components/design/Theme";
 import DevPanel from "@/shared/components/dev/DevPanel";
 import { ActiveSession } from "@/shared/components/session-views/ActiveSession";
 import { BreakView } from "@/shared/components/session-views/BreakView";
-import { ConfigureSession } from "@/shared/components/session-views/ConfigureSession";
+import { ConfigureSession } from "@/shared/components/session-views/configure/ConfigureSession";
 import { SessionComplete } from "@/shared/components/session-views/SessionComplete";
 import { useBreak } from "@/shared/hooks/useBreak";
 import { useSession } from "@/shared/hooks/useSession";

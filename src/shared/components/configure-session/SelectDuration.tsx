@@ -34,8 +34,9 @@ export function SelectDuration({
         const value = evt.currentTarget.value;
         if (value === "not-selected") {
           onChange(value);
+        } else {
+          onChange(parseInt(value));
         }
-        onChange(parseInt(value));
       }}
     >
       <option value="not-selected">--</option>

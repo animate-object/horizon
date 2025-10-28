@@ -41,16 +41,6 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
     return options.find(({ url }) => url === value);
   }, [options, created]);
 
-  useEffect(() => {
-    console.log({
-      options,
-      created,
-      definitions,
-      value,
-      selectedOption,
-    });
-  }, [options, created, definitions, value, selectedOption]);
-
   return (
     <CreatableSelect
       onChange={(def) => {
