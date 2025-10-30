@@ -5,9 +5,10 @@ import {
   ToolsetLoader,
 } from "@/shared/lib/datastore";
 import { InlineModal } from "@/shared/components/layout/InlineModal";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ToolsetBrowserCard } from "./ToolsetBrowserCard";
 import { EnhancedToolset } from "./types";
+import { EditToolsetModal } from "./EditToolsetModal";
 
 interface Props {
   onBack: VoidFunction;
@@ -19,26 +20,37 @@ export function ToolsetBrowser({ onBack, onSelectToolset }: Props) {
   const [toolLookup, setToolLookup] = useState<Record<string, ToolDefinition>>(
     {}
   );
-
+  const [focusedToolsetId, setFocusedToolsetId] = useState<
+    string | undefined
+  >();
   useEffect(() => {
     const toolLoader = new ToolLoader();
     toolLoader.getStore().then((tools) => {
       setToolLookup(tools ?? []);
     });
-  }, []);
+  }, [focusedToolsetId]);
 
   useEffect(() => {
     const toolsetLoader = new ToolsetLoader();
     toolsetLoader.getStore().then((toolsetStore) => {
       setToolsets(Object.values(toolsetStore));
     });
-  });
+  }, [focusedToolsetId]);
 
   const toolsetList: EnhancedToolset[] = useMemo(() => {
     return toolsets.map((ts) => {
       return { ...ts, tools: ts.toolIds.map((id) => toolLookup[id]) };
     });
   }, [toolsets, toolLookup]);
+
+  if (focusedToolsetId) {
+    return (
+      <EditToolsetModal
+        toolsetId={focusedToolsetId}
+        onBack={() => setFocusedToolsetId(undefined)}
+      />
+    );
+  }
 
   return (
     <InlineModal onBack={onBack} title="Browse Toolsets">
@@ -47,6 +59,7 @@ export function ToolsetBrowser({ onBack, onSelectToolset }: Props) {
           {toolsetList.map((ts) => (
             <ToolsetBrowserCard
               toolset={ts}
+              onViewToolsetDetail={setFocusedToolsetId}
               onSelectToolset={(ts) => {
                 onSelectToolset(ts);
                 onBack();

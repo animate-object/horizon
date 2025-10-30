@@ -191,6 +191,7 @@ export class DataLoader<E extends Entity> {
     const store = await this.getStore();
     if (!store.hasOwnProperty(id)) return;
     delete store[id];
+    await this.write_({ ...store });
   }
 }
 
