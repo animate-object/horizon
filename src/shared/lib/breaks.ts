@@ -1,5 +1,10 @@
 import { PastSession, PastSessionLoader } from "./datastore";
-import { computeSessionEndEpoch, SessionMode } from "@/shared/lib/session";
+import {
+  computeSessionEndEpoch,
+  computeSessionState,
+  SessionConfiguration,
+  SessionMode,
+} from "@/shared/lib/session";
 import { epochToIso, isoDateToEpoch, minutesAgo } from "./time";
 import { Storage, StorageKeys } from "./storage";
 import { isEqual } from "lodash";
@@ -135,6 +140,14 @@ export function computeNextBreak(
 }
 
 export async function setNextBreakIfNeeded() {
+  const session = await Storage.get<SessionConfiguration | undefined>(
+    StorageKeys.ActiveSessionConfig
+  );
+  if (computeSessionState(session) === "active") {
+    console.info("Skipping break - session in progress");
+    return;
+  }
+
   const sessions = await new PastSessionLoader().recentSessions(50);
 
   const nextBreak = computeNextBreak(sessions);

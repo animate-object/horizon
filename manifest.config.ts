@@ -9,6 +9,7 @@ export default defineManifest({
     48: "public/logo.png",
   },
   action: {
+    default_popup: "src/pages/popup.html",
     default_icon: {
       48: "public/logo.png",
     },

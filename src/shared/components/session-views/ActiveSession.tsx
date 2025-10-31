@@ -10,8 +10,9 @@ import { SessionActions } from "@/shared/components/session-views/SessionActions
 import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
 import { CountdownClock } from "../CoundownClock";
 import { useCountdown } from "@/shared/hooks/useCountdown";
+import clsx from "clsx";
 
-export function ActiveSession() {
+export function ActiveSession({ condensed }: { condensed?: boolean }) {
   const { lastTabActiveTime, isTabVisible } = useIsBrowserTabActive();
   const [sessionData, setSessionData] = useState<
     SessionConfiguration | undefined
@@ -46,20 +47,22 @@ export function ActiveSession() {
     }
   }, [lastTabActiveTime, isTabVisible]);
 
+  const TextEl = condensed ? Text.SectionHeader : Text.SubHeader;
+
   if (status === "init") return "Loading";
   if (status === "complete") return <Text.Header>Complete</Text.Header>;
   return (
-    <div className="flex flex-col gap-4">
+    <div className={clsx("flex flex-col", condensed ? "gap-2" : "gap-4")}>
       {sessionData && <SessionDetails {...sessionData} />}
 
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <div>
-          <SessionActions session={sessionData} />
+          <SessionActions condensed={condensed} session={sessionData} />
         </div>
-        <Text.SubHeader>
+        <TextEl>
           Time remaining&nbsp;
           <CountdownClock timeRemainingSeconds={timeRemainingSeconds} />
-        </Text.SubHeader>
+        </TextEl>
       </div>
     </div>
   );

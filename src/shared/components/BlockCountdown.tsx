@@ -16,7 +16,8 @@ export function BlockCountdown({ minutes = 0.5 }: Props) {
 
   useEffect(() => {
     if (status === "complete") {
-      window.location.href = "/src/pages/blocked.html";
+      const url = chrome.runtime.getURL(`src/pages/blocked.html`);
+      window.location.href = url;
     }
   }, [status]);
 
@@ -34,7 +35,6 @@ export function BlockCountdown({ minutes = 0.5 }: Props) {
       }}
       className="shadow-md"
     >
-      {/* <div className="flex justify-between items-center mb-4"> */}
       <div
         style={{
           display: "flex",

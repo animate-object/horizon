@@ -9,6 +9,7 @@ import {
   AlarmType,
   Message,
   MessageType,
+  OpenExtensionView,
   ResponseBuilder,
   TestBlockListMessage,
 } from "@/shared/lib/messages";
@@ -144,6 +145,12 @@ const handleTestBlocklist = async (
   sendResponse(ResponseBuilder.decision(isBlocked));
 };
 
+async function handleOpenExtensionView(message: OpenExtensionView) {
+  await chrome.tabs.create({
+    url: chrome.runtime.getURL(`src/pages/${message.view}.html`),
+  });
+}
+
 const handleKnownMessage = async (
   message: Message,
   sendResponse: (message?: any) => void
@@ -160,6 +167,9 @@ const handleKnownMessage = async (
       return;
     case MessageType.testBlocklist:
       await handleTestBlocklist(message, sendResponse);
+      return;
+    case MessageType.openExtensionView:
+      await handleOpenExtensionView(message);
       return;
     default:
       console.warn("Unknown message type", message);

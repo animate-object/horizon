@@ -3,6 +3,7 @@ export enum MessageType {
   landingViewed = "landing-viewed",
   endSession = "end-session",
   testBlocklist = "test-block-list",
+  openExtensionView = "open-extension-view",
 }
 
 interface BaseMessage {
@@ -26,11 +27,17 @@ export interface EndSessionMessage extends BaseMessage {
   type: MessageType.endSession;
 }
 
+export interface OpenExtensionView extends BaseMessage {
+  type: MessageType.openExtensionView;
+  view: "landing" | "blocked";
+}
+
 export type Message =
   | TestBlockListMessage
   | SessionStartedMessage
   | LandingViewedMessage
-  | EndSessionMessage;
+  | EndSessionMessage
+  | OpenExtensionView;
 
 export const MessageBuilder = {
   sessionStarted: (): SessionStartedMessage => ({
@@ -43,6 +50,10 @@ export const MessageBuilder = {
   testBlockList: (url: string): TestBlockListMessage => ({
     type: MessageType.testBlocklist,
     url,
+  }),
+  openExtensionView: (view: OpenExtensionView["view"]): OpenExtensionView => ({
+    type: MessageType.openExtensionView,
+    view,
   }),
 };
 

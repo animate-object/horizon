@@ -9,7 +9,7 @@ export function SessionDetails({
   if (mode === "free") {
     return (
       <div className="flex flex-col gap-2">
-        <Text.SubHeader>Free browsing</Text.SubHeader>
+        <Text.Header>Free browsing</Text.Header>
         <Text.Body light>Do whatever! Anything goes.</Text.Body>
       </div>
     );
@@ -17,7 +17,7 @@ export function SessionDetails({
 
   return (
     <div className="flex flex-col gap-2">
-      <Text.SubHeader>Your task</Text.SubHeader>
+      <Text.Header>Your task</Text.Header>
       <Text.Body light>{taskDescription}</Text.Body>
       <Text.SubHeader>You can use these tools:</Text.SubHeader>
       <ul className="list bg-base-300 shadow-xs">

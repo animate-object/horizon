@@ -8,8 +8,10 @@ import StopIcon from "@/shared/components/icons/StopIcon";
 
 export function SessionActions({
   session,
+  condensed,
 }: {
   session?: SessionConfiguration;
+  condensed?: boolean;
 }) {
   const state = computeSessionState(session);
   if (state !== "active") return;
@@ -29,7 +31,12 @@ export function SessionActions({
 
   return (
     <>
-      <Button soft color="destructive" onClick={handleEndSession}>
+      <Button
+        small={condensed}
+        soft
+        color="destructive"
+        onClick={handleEndSession}
+      >
         <StopIcon /> End session
       </Button>
     </>
