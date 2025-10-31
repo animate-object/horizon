@@ -2,20 +2,58 @@ export enum MessageType {
   sessionStarted = "session-started",
   landingViewed = "landing-viewed",
   endSession = "end-session",
+  testBlocklist = "test-block-list",
 }
 
-export interface Message {
+interface BaseMessage {
   type: MessageType;
 }
 
+export interface TestBlockListMessage extends BaseMessage {
+  type: MessageType.testBlocklist;
+  url: string;
+}
+
+export interface SessionStartedMessage extends BaseMessage {
+  type: MessageType.sessionStarted;
+}
+
+export interface LandingViewedMessage extends BaseMessage {
+  type: MessageType.landingViewed;
+}
+
+export interface EndSessionMessage extends BaseMessage {
+  type: MessageType.endSession;
+}
+
+export type Message =
+  | TestBlockListMessage
+  | SessionStartedMessage
+  | LandingViewedMessage
+  | EndSessionMessage;
+
 export const MessageBuilder = {
-  sessionStarted: (): Message => ({ type: MessageType.sessionStarted }),
-  endSession: (): Message => ({ type: MessageType.endSession }),
-  landingViewed: (): Message => ({ type: MessageType.landingViewed }),
+  sessionStarted: (): SessionStartedMessage => ({
+    type: MessageType.sessionStarted,
+  }),
+  endSession: (): EndSessionMessage => ({ type: MessageType.endSession }),
+  landingViewed: (): LandingViewedMessage => ({
+    type: MessageType.landingViewed,
+  }),
+  testBlockList: (url: string): TestBlockListMessage => ({
+    type: MessageType.testBlocklist,
+    url,
+  }),
 };
 
+export type DecisionResponse = { type: "decision"; decision: boolean };
+
 export const ResponseBuilder = {
-  taskComplete: (): { type: string } => ({ type: "task-complete" }),
+  taskComplete: (): { type: "task-complete" } => ({ type: "task-complete" }),
+  decision: (decision: boolean): DecisionResponse => ({
+    type: "decision",
+    decision,
+  }),
 };
 
 export enum AlarmType {

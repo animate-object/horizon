@@ -14,6 +14,7 @@ export default defineManifest({
     },
   },
   permissions: [
+    "scripting",
     "contentSettings",
     "declarativeNetRequest",
     "storage",
@@ -27,4 +28,10 @@ export default defineManifest({
     service_worker: "src/background/main.ts",
     type: "module",
   },
+  content_scripts: [
+    {
+      matches: ["<all_urls>"],
+      js: ["src/scripts/blocklistWatcher.tsx"],
+    },
+  ],
 });

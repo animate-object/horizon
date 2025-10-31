@@ -10,6 +10,7 @@ import {
   Message,
   MessageType,
   ResponseBuilder,
+  TestBlockListMessage,
 } from "@/shared/lib/messages";
 import {
   computeSessionState,
@@ -113,6 +114,36 @@ const handleEndSessionEarly = async (sendResponse: (message?: any) => void) => {
   sendResponse(ResponseBuilder.taskComplete());
 };
 
+const handleTestBlocklist = async (
+  message: TestBlockListMessage,
+  sendResponse: (message?: any) => void
+) => {
+  const rules = await chrome.declarativeNetRequest.testMatchOutcome({
+    url: message.url,
+    type: "main_frame",
+  });
+
+  if (rules.matchedRules.length === 0) {
+    console.info("Free browsing mode");
+    sendResponse(ResponseBuilder.decision(false));
+  }
+
+  console.debug(`URL matched ${rules.matchedRules.length} rules`);
+  const activeRules = await chrome.declarativeNetRequest.getDynamicRules();
+
+  let isBlocked = true;
+
+  for (const match of rules.matchedRules) {
+    const rule = activeRules.find((r) => r.id === match.ruleId);
+    if (rule?.action?.type === "allow") {
+      isBlocked = false;
+      break;
+    }
+  }
+
+  sendResponse(ResponseBuilder.decision(isBlocked));
+};
+
 const handleKnownMessage = async (
   message: Message,
   sendResponse: (message?: any) => void
@@ -126,6 +157,9 @@ const handleKnownMessage = async (
       return;
     case MessageType.endSession:
       await handleEndSessionEarly(sendResponse);
+      return;
+    case MessageType.testBlocklist:
+      await handleTestBlocklist(message, sendResponse);
       return;
     default:
       console.warn("Unknown message type", message);
