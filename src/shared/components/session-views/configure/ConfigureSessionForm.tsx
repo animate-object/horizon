@@ -4,7 +4,7 @@ import {
   DurationOption,
   SelectDuration,
 } from "../../configure-session/SelectDuration";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { validateTools } from "@/shared/lib/tool";
 import { isEmpty } from "lodash";
 import { MessageBuilder } from "@/shared/lib/messages";

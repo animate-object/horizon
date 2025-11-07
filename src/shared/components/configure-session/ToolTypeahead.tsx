@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ToolDefinition, ToolLoader } from "@/shared/lib/datastore";
 import CreatableSelect from "react-select/creatable";
-import { isEmpty } from "lodash";
 import clsx from "clsx";
 import { isValidToolUrl } from "@/shared/lib/tool";
 
@@ -35,11 +34,6 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
     () => [...definitions, ...created],
     [created, definitions]
   );
-
-  const selectedOption = useMemo(() => {
-    if (isEmpty(value)) return;
-    return options.find(({ url }) => url === value);
-  }, [options, created]);
 
   return (
     <CreatableSelect

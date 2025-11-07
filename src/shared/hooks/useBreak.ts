@@ -6,11 +6,8 @@ import { useStorageSlice } from "./useStorageSlice";
 import { computeSessionState, SessionMode } from "../lib/session";
 import { useCountdown, UseCountdownReturn } from "./useCountdown";
 import { isoDateToEpoch, minutesToMs } from "../lib/time";
-import { prefixLogger } from "../lib/log";
 
 type UseBreakReturn = Record<SessionMode, UseCountdownReturn>;
-
-const logger = prefixLogger("useBreak");
 
 export function useBreak(): UseBreakReturn {
   const { data: breakData } = useStorageSlice<Break>(StorageKeys.Break);

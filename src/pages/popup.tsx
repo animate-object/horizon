@@ -1,20 +1,13 @@
-import { CountdownClock } from "@/shared/components/CoundownClock";
 import Button from "@/shared/components/design/Button";
 import Paper from "@/shared/components/design/Paper";
 import Text from "@/shared/components/design/Text";
 import Root from "@/shared/components/design/Theme";
 import { ActiveSession } from "@/shared/components/session-views/ActiveSession";
 import { BreakView } from "@/shared/components/session-views/BreakView";
-import { SessionActions } from "@/shared/components/session-views/SessionActions";
-import { SessionDetails } from "@/shared/components/session-views/SessionDetails";
 import { useBreak } from "@/shared/hooks/useBreak";
 import { useSession } from "@/shared/hooks/useSession";
 import { MessageBuilder } from "@/shared/lib/messages";
-import {
-  clearSessionState,
-  computeSessionState,
-  SessionConfiguration,
-} from "@/shared/lib/session";
+import { clearSessionState, computeSessionState } from "@/shared/lib/session";
 import { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 

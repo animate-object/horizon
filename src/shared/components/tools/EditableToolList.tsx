@@ -16,7 +16,7 @@ export function EditableToolList({
   secondaryAuthoringAction,
   onUpdateTools,
 }: Props) {
-  const [focusedIdx, setFocusedIdx] = useState<number | null>(null);
+  const [_focusedIdx, setFocusedIdx] = useState<number | null>(null);
   const hasSecondaryAction = secondaryAuthoringAction != null;
 
   const handleAddTool = useCallback(() => {

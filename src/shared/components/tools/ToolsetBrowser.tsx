@@ -5,7 +5,7 @@ import {
   ToolsetLoader,
 } from "@/shared/lib/datastore";
 import { InlineModal } from "@/shared/components/layout/InlineModal";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ToolsetBrowserCard } from "./ToolsetBrowserCard";
 import { EnhancedToolset } from "./types";
 import { EditToolsetModal } from "./EditToolsetModal";
