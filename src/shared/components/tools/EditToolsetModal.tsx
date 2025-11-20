@@ -55,7 +55,7 @@ export function EditToolsetModal({ onBack, toolsetId }: Props) {
 
   const handleUpdateToolset = useCallback(async () => {
     try {
-      const toolsetLoader = await new ToolsetLoader();
+      const toolsetLoader = new ToolsetLoader();
       const toolset = await toolsetLoader.get(toolsetId);
       if (toolset == null) {
         logger.warn(`Toolset ${toolsetId} not found`);
@@ -73,7 +73,6 @@ export function EditToolsetModal({ onBack, toolsetId }: Props) {
       });
       await new ToolsetLoader().upsert(updated);
       logger.log("Created", toolset);
-
       onBack();
     } catch (err) {
       logger.error("Failed to update toolset", err);

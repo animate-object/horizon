@@ -60,8 +60,10 @@ export function ToolsetBrowser({ onBack, onSelectToolset }: Props) {
             <ToolsetBrowserCard
               toolset={ts}
               onViewToolsetDetail={setFocusedToolsetId}
-              onSelectToolset={(ts) => {
-                onSelectToolset(ts);
+              onSelectToolset={async (ts) => {
+                const toolset = await new ToolsetLoader().get(ts.id);
+                if (toolset == undefined) return;
+                onSelectToolset(toolset);
                 onBack();
               }}
             />

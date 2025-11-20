@@ -22,9 +22,6 @@ export default defineManifest({
     "alarms",
   ],
   host_permissions: ["<all_urls>"],
-  side_panel: {
-    default_path: "src/sidepanel/index.html",
-  },
   background: {
     service_worker: "src/background/main.ts",
     type: "module",
