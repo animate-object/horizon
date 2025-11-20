@@ -6,7 +6,7 @@ import {
 } from "../../configure-session/SelectDuration";
 import { useCallback, useMemo } from "react";
 import { validateTools } from "@/shared/lib/tool";
-import { isEmpty } from "lodash";
+import { isEmpty, uniq } from "lodash";
 import { MessageBuilder } from "@/shared/lib/messages";
 import { Storage } from "@/shared/lib/storage";
 import Text from "../../design/Text";
@@ -29,6 +29,29 @@ const TABS = [
     label: "Free Browse",
   },
 ];
+
+type DescriptionValidation = { invalidReason?: string; isValid: boolean };
+
+const validateTaskDescription = (
+  description: string,
+  minWords: number,
+  minChars: number
+): DescriptionValidation => {
+  let invalidReason: string | undefined;
+  if (description == null || description.length < minChars) {
+    invalidReason = `Say a little bit more.`;
+  } else if (description.split(" ").length < minWords) {
+    invalidReason = `Express yourself - use at least ${minWords} words.`;
+  } else if (uniq(description.split("")).length < 3) {
+    invalidReason = `This description doesn't look quite right. Try again.`;
+  }
+
+  return {
+    invalidReason,
+    isValid: invalidReason == null,
+  };
+};
+
 const validateFormState = ({
   taskDescription,
   tools,
@@ -41,16 +64,19 @@ const validateFormState = ({
   sessionMode: "free" | "standard";
 }): {
   tools: { empty: boolean; allValid: boolean };
+  description: DescriptionValidation;
   isFormValid: boolean;
 } => {
   if (sessionMode === "free") {
     return {
       tools: { empty: true, allValid: true },
       isFormValid: typeof duration === "number",
+      description: { isValid: true },
     };
   }
 
   const toolValidation = validateTools(tools);
+  const descriptionValidation = validateTaskDescription(taskDescription, 3, 12);
 
   const isFormValid =
     toolValidation.allValid &&
@@ -58,7 +84,11 @@ const validateFormState = ({
     duration !== "not-selected" &&
     !isEmpty(taskDescription);
 
-  return { tools: toolValidation, isFormValid };
+  return {
+    tools: toolValidation,
+    isFormValid,
+    description: descriptionValidation,
+  };
 };
 
 interface Props {
@@ -133,6 +163,9 @@ export function ConfigureSessionForm({
         <>
           <StandardSessionSettings
             description={taskDescription}
+            descriptionValidationMessage={
+              taskDescription.length > 0 && validation.description.invalidReason
+            }
             tools={tools}
             saveToolsetEnabled={
               validation.tools.allValid && !validation.tools.empty

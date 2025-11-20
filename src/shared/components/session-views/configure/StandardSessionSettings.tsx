@@ -7,6 +7,7 @@ import { SetToolsCb } from "./types";
 
 interface Props {
   description: string;
+  descriptionValidationMessage?: string;
   tools: string[];
   saveToolsetEnabled: boolean;
   onSetDescription: (d: string) => void;
@@ -17,6 +18,7 @@ interface Props {
 
 export function StandardSessionSettings({
   description,
+  descriptionValidationMessage,
   tools,
   saveToolsetEnabled,
   onSetDescription,
@@ -36,6 +38,12 @@ export function StandardSessionSettings({
           }}
         />
       </FormElementWrapper>
+      <div className="flex flex-col gap-y-2 text-error">
+        {descriptionValidationMessage && (
+          <span>{descriptionValidationMessage}</span>
+        )}
+      </div>
+
       <FormElementWrapper
         label={
           <div className="flex justify-between items-center">
