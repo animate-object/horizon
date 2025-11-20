@@ -164,7 +164,9 @@ export function ConfigureSessionForm({
           <StandardSessionSettings
             description={taskDescription}
             descriptionValidationMessage={
-              taskDescription.length > 0 && validation.description.invalidReason
+              taskDescription.length > 0
+                ? validation.description.invalidReason
+                : undefined
             }
             tools={tools}
             saveToolsetEnabled={
