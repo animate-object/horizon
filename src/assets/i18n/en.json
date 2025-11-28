@@ -66,6 +66,7 @@
     },
     "break": {
       "title": "Time for a break",
+      "thisIsAGoodTime": "This is a good time to:",
       "thisIsAGoodTime1": "Stand up and move around",
       "thisIsAGoodTime2": "Look away from your screen",
       "thisIsAGoodTime3": "Decide whether to continue",
