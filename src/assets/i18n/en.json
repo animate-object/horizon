@@ -12,7 +12,7 @@
       "edit": "Edit",
       "addAnother": "Add another",
       "delete": "Delete",
-      "timeRemaining": "Time Remaining",
+      "timeRemaining": "Time remaining",
       "freeBrowsing": "Free browsing",
       "minute": "minute",
       "minutes": "minutes",
@@ -30,24 +30,23 @@
     },
     "postSession": {
       "sessionComplete": "Session complete",
-      "goodTimeToTakeABreak": "This is a good time to take a break",
-      "whenYoureReady": "When your ready, you can start new session",
+      "goodTimeToTakeABreak": "This is a good time to take a break.",
+      "whenYoureReady": "When you're ready, you can start new session.",
       "newWithSameTtools": "New with same tools"
     },
     "configureSession": {
-      "freeBrowseDescription": "Browse the internet without restrictions for a limited amount of time",
+      "freeBrowseDescription": "Browse the internet without restrictions for a limited amount of time.",
       "freeBrowseDisabled": "Free browsing is disabled for a bit longer.",
       "descriptionPrompt": "What are you here to do?",
       "toolPrompt": "What tools will you use?",
-      "durationPrompt": "How long will you work?",
-      "promptToShort": "Say a little bit more",
-      "promptNotEnoughWords": "Express yourself - use at least {{wordcount}} words",
-      "promptNotComplexEnough": "This description doesn't look quite right, try again",
+      "durationPrompt": "How long will this session last?",
+      "promptToShort": "Task description must be longer.",
+      "promptNotEnoughWords": "Task description must be at least {{wordcount}} words.",
+      "promptNotComplexEnough": "Task description invalid. Use a few real words.",
       "alertMissingDuration": "Select duration",
-      "alertMissingTools": "Specify at least "
+      "alertMissingTools": "Specify at least one tool"
     },
     "toolSelection": {
-      "placeholder": "Select...",
       "saveAsToolset": "Save as toolset",
       "invalidToolUrl": "One or more tools are not valid URLs"
     },
@@ -67,7 +66,12 @@
     },
     "break": {
       "title": "Time for a break",
-      "description": "Stand up, walk around, grab a coffee, step outside."
+      "thisIsAGoodTime1": "Stand up and move around",
+      "thisIsAGoodTime2": "Look away from your screen",
+      "thisIsAGoodTime3": "Decide whether to continue",
+      "why": "Why should I take a break?",
+      "whyExplanation1": "Digital technology eliminates friction, allowing you to quickly move between infinite tasks. This property makes it both useful and easy to misuse.",
+      "whyExplanation2": "By restoring a small amount of friction, breaks give you space to reflect and make decisions."
     },
     "dev": {
       "clearSession": "Clear session",
