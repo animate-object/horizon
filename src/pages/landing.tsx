@@ -9,10 +9,13 @@ import { SessionComplete } from "@/shared/components/session-views/SessionComple
 import { useBreak } from "@/shared/hooks/useBreak";
 import { useSession } from "@/shared/hooks/useSession";
 import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
+import { initI18n } from "@/shared/lib/i18n";
 import { MessageBuilder } from "@/shared/lib/messages";
 import { computeSessionState, SessionState } from "@/shared/lib/session";
 import { useEffect, useMemo } from "react";
 import ReactDOM from "react-dom/client";
+
+initI18n();
 
 type AppState = SessionState | "break";
 

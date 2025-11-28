@@ -5,14 +5,15 @@ import {
 import Button from "@/shared/components/design/Button";
 import { MessageBuilder } from "@/shared/lib/messages";
 import StopIcon from "@/shared/components/icons/StopIcon";
+import { useTranslation } from "react-i18next";
 
-export function SessionActions({
-  session,
-  condensed,
-}: {
+interface Props {
   session?: SessionConfiguration;
   condensed?: boolean;
-}) {
+}
+
+export function SessionActions({ session, condensed }: Props) {
+  const { t } = useTranslation();
   const state = computeSessionState(session);
   if (state !== "active") return;
 
@@ -37,7 +38,7 @@ export function SessionActions({
         color="destructive"
         onClick={handleEndSession}
       >
-        <StopIcon /> End session
+        <StopIcon /> {t("common.endSession")}
       </Button>
     </>
   );

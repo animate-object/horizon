@@ -6,19 +6,24 @@ import { ActiveSession } from "@/shared/components/session-views/ActiveSession";
 import { BreakView } from "@/shared/components/session-views/BreakView";
 import { useBreak } from "@/shared/hooks/useBreak";
 import { useSession } from "@/shared/hooks/useSession";
+import { initI18n } from "@/shared/lib/i18n";
 import { MessageBuilder } from "@/shared/lib/messages";
 import { clearSessionState, computeSessionState } from "@/shared/lib/session";
 import { useMemo } from "react";
 import ReactDOM from "react-dom/client";
+import { useTranslation } from "react-i18next";
+
+initI18n();
 
 function NewSessionPopup() {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-y-2">
       <div className="flex items-baseline">
-        <Text.Header>Horizon</Text.Header>
-        <Text.Header light>&nbsp;-&nbsp;Intentional browsing</Text.Header>
+        <Text.Header>{t("common.appName")}</Text.Header>
+        <Text.Header light>&nbsp;-&nbsp;{t("common.tagline")}</Text.Header>
       </div>
-      <Text.Body light>To get started, begin a new session</Text.Body>
+      <Text.Body light>{t("preSession.toGetStarted")}</Text.Body>
       <Button
         onClick={() => {
           clearSessionState();
@@ -27,7 +32,7 @@ function NewSessionPopup() {
           );
         }}
       >
-        New session
+        {t("common.newSession")}
       </Button>
     </div>
   );

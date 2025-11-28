@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useCountdown } from "../hooks/useCountdown";
 import { minutesToMs } from "../lib/time";
 import { CountdownClock } from "./CoundownClock";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   minutes?: number;
 }
 
 export function BlockCountdown({ minutes = 0.5 }: Props) {
+  const { t } = useTranslation();
   const [countdownEnd, setCountdownEnd] = useState<number | undefined>();
   useEffect(() => {
     setCountdownEnd(Date.now() + minutesToMs(minutes));
@@ -49,7 +51,7 @@ export function BlockCountdown({ minutes = 0.5 }: Props) {
             fontWeight: "bolder",
           }}
         >
-          Page will be blocked
+          {t("blocked.blockWarningTitle")}
         </div>{" "}
         {status == "active" ? (
           <CountdownClock timeRemainingSeconds={timeRemainingSeconds} />
@@ -63,7 +65,7 @@ export function BlockCountdown({ minutes = 0.5 }: Props) {
           marginBottom: "0.75rem",
         }}
       >
-        <div>This page is not allowed and will be blocked soon.</div>
+        <div>{t("blocked.blockWarning")}</div>
       </div>
     </div>
   );

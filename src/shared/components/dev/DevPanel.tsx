@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Paper from "@/shared/components/design/Paper";
 import Text from "@/shared/components/design/Text";
 import Button from "@/shared/components/design/Button";
+import { useTranslation } from "react-i18next";
 
 const isDev = () => {
   return !("update_url" in chrome.runtime.getManifest());
@@ -29,6 +30,7 @@ function JsonView({ data }: { data: object }) {
 }
 
 function SessionData() {
+  const { t } = useTranslation();
   const [sessionData, setSessionData] = useState<object>({});
 
   useEffect(() => {
@@ -54,13 +56,14 @@ function SessionData() {
 
   return (
     <div>
-      <Text.SectionHeader>Session data</Text.SectionHeader>
+      <Text.SectionHeader>{t("dev.sessionData")}</Text.SectionHeader>
       <JsonView data={sessionData} />
     </div>
   );
 }
 
 function DevPanel({ onHide }: { onHide: VoidFunction }) {
+  const { t } = useTranslation();
   const clearSession = () => {
     clearSessionState();
     window.location.reload();
@@ -73,13 +76,13 @@ function DevPanel({ onHide }: { onHide: VoidFunction }) {
 
       <div className="flex flex-wrap justify-end gap-2">
         <Button soft color="secondary" onClick={clearSession}>
-          Clear session
+          {t("dev.clearSession")}
         </Button>
         <Button soft color="secondary" onClick={clearAllBlockingRules}>
-          Clear rules
+          {t("dev.clearRules")}
         </Button>
         <Button soft color="primary" onClick={onHide}>
-          Hide for session
+          {t("dev.hideForSession")}
         </Button>
       </div>
     </div>

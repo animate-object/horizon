@@ -7,19 +7,24 @@ import DevPanel from "@/shared/components/dev/DevPanel";
 import { SessionActions } from "@/shared/components/session-views/SessionActions";
 import { SessionDetails } from "@/shared/components/session-views/SessionDetails";
 import { useSession } from "@/shared/hooks/useSession";
+import { initI18n } from "@/shared/lib/i18n";
 import { clearSessionState, computeSessionState } from "@/shared/lib/session";
 import { useMemo } from "react";
 import ReactDOM from "react-dom/client";
+import { useTranslation } from "react-i18next";
+
+initI18n();
 
 function BlockedPage() {
   const { session } = useSession();
+  const { t } = useTranslation();
   const sessionState = useMemo(() => computeSessionState(session), [session]);
   return (
     <Root>
       <Layout overlay={<DevPanel />}>
         <Paper>
           <div className="flex flex-col gap-4">
-            <Text.Header>This page was blocked</Text.Header>
+            <Text.Header>{t("blocked.thisPageWasBlocked")}</Text.Header>
             {sessionState !== "active" && (
               <div>
                 <Button
@@ -30,15 +35,13 @@ function BlockedPage() {
                   color="primary"
                   ghost
                 >
-                  Start a new session
+                  {t("common.startANewSession")}
                 </Button>
               </div>
             )}
             {sessionState === "active" && (
               <div className="flex flex-col gap-2">
-                <Text.Body light>
-                  Here's a reminder about what you set out to do:
-                </Text.Body>
+                <Text.Body light>{t("blocked.reminder")}</Text.Body>
                 {session && <SessionDetails {...session} />}
               </div>
             )}

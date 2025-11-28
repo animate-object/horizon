@@ -19,6 +19,9 @@ import { SetToolsCb } from "./types";
 import { StandardSessionSettings } from "./StandardSessionSettings";
 import { useBreak } from "@/shared/hooks/useBreak";
 import { CountdownClock } from "../../CoundownClock";
+import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+
 const TABS = [
   {
     id: "standard",
@@ -35,15 +38,21 @@ type DescriptionValidation = { invalidReason?: string; isValid: boolean };
 const validateTaskDescription = (
   description: string,
   minWords: number,
-  minChars: number
+  minChars: number,
+  t: TFunction
 ): DescriptionValidation => {
   let invalidReason: string | undefined;
   if (description == null || description.length < minChars) {
-    invalidReason = `Say a little bit more.`;
+    // invalidReason = `Say a little bit more.`;
+    invalidReason = t("configureSession.promptToShort");
   } else if (description.split(" ").length < minWords) {
-    invalidReason = `Express yourself - use at least ${minWords} words.`;
+    // invalidReason = `Express yourself - use at least ${minWords} words.`;
+    invalidReason = t("configureSession.promptNotEnoughWords", {
+      wordcount: minWords,
+    });
   } else if (uniq(description.split("")).length < 3) {
-    invalidReason = `This description doesn't look quite right. Try again.`;
+    // invalidReason = `This description doesn't look quite right. Try again.`;
+    invalidReason = t("configureSession.promptNotComplexEnough");
   }
 
   return {
@@ -52,17 +61,17 @@ const validateTaskDescription = (
   };
 };
 
-const validateFormState = ({
-  taskDescription,
-  tools,
-  duration,
-  sessionMode,
-}: {
+interface ValidatorArgs {
   taskDescription: string;
   tools: string[];
   duration: number | "not-selected";
   sessionMode: "free" | "standard";
-}): {
+}
+
+const validateFormState = (
+  { taskDescription, tools, duration, sessionMode }: ValidatorArgs,
+  t: TFunction
+): {
   tools: { empty: boolean; allValid: boolean };
   description: DescriptionValidation;
   isFormValid: boolean;
@@ -76,7 +85,12 @@ const validateFormState = ({
   }
 
   const toolValidation = validateTools(tools);
-  const descriptionValidation = validateTaskDescription(taskDescription, 3, 12);
+  const descriptionValidation = validateTaskDescription(
+    taskDescription,
+    3,
+    12,
+    t
+  );
 
   const isFormValid =
     toolValidation.allValid &&
@@ -112,24 +126,26 @@ export function ConfigureSessionForm({
   onSetDuration,
   onSelectTab,
 }: Props) {
+  const { t } = useTranslation();
   const { free } = useBreak();
 
   const validation = useMemo(
-    () => validateFormState({ taskDescription, tools, duration, sessionMode }),
+    () =>
+      validateFormState({ taskDescription, tools, duration, sessionMode }, t),
     [taskDescription, tools, duration, sessionMode]
   );
 
   const handleSubmit = useCallback(() => {
     if (duration === "not-selected") {
-      return alert("Select duration");
+      return alert(t("configureSession.alertMissingDuration"));
     }
     if (!validation.isFormValid && validation.tools.empty) {
-      return alert("Specify at least one tool");
+      return alert(t("configureSession.alertMissingTools"));
     }
 
     const config: SessionConfiguration = {
       taskDescription:
-        sessionMode === "standard" ? taskDescription : "free browsing",
+        sessionMode === "standard" ? taskDescription : t("common.freeBrowsing"),
       durationMinutes: duration,
       startedAt: new Date().toISOString(),
       allowedToolUrls: sessionMode === "standard" ? tools : [],
@@ -153,7 +169,7 @@ export function ConfigureSessionForm({
 
   return (
     <div className="flex flex-col gap-y-2">
-      <Text.Header>New Session</Text.Header>
+      <Text.Header>{t("common.newSession")}</Text.Header>
       <Tabs
         activeTabId={sessionMode}
         tabs={TABS}
@@ -179,11 +195,11 @@ export function ConfigureSessionForm({
           />
           <div className="flex flex-col gap-y-2 text-error">
             {!validation.tools.empty && !validation.tools.allValid && (
-              <span>One or more tools are not valid URLs</span>
+              <span>{t("toolSelection.invalidToolUrl")}</span>
             )}
           </div>
 
-          <FormElementWrapper label="How long will you work?">
+          <FormElementWrapper label={t("configureSession.durationPrompt")}>
             <SelectDuration
               classNames={["w-half"]}
               value={duration}
@@ -196,12 +212,11 @@ export function ConfigureSessionForm({
       {sessionMode === "free" && !disableStartFreeSession && (
         <>
           <Text.Body light>
-            Browse the internet without restrictions for a limited amount of
-            time
+            {t("configureSession.freeBrowseDescription")}
           </Text.Body>
           <div className="divider divider-accent my-0" />
 
-          <FormElementWrapper label="How long will you work?">
+          <FormElementWrapper label={t("configureSession.durationPrompt")}>
             <SelectDuration
               choices={DURATION_CHOICES_LIMITED}
               classNames={["w-half"]}
@@ -214,10 +229,10 @@ export function ConfigureSessionForm({
       {disableStartFreeSession && (
         <div className="w-full flex justify-between mb-4 mt-2">
           <Text.Body light>
-            Free browsing is disabled for a bit longer.
+            {t("configureSession.freeBrowseDisabled")}
           </Text.Body>
           <Text.Body>
-            Time remaining&nbsp;
+            {t("common.timeRemaining")}&nbsp;
             <CountdownClock timeRemainingSeconds={free.timeRemainingSeconds} />
           </Text.Body>
         </div>
@@ -228,7 +243,7 @@ export function ConfigureSessionForm({
           onClick={handleSubmit}
           disabled={!validation.isFormValid || disableStartFreeSession}
         >
-          <StartIcon /> Start session
+          <StartIcon /> {t("common.startSession")}
         </Button>
       </div>
     </div>

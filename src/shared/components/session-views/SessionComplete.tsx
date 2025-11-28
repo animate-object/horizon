@@ -5,8 +5,11 @@ import { Storage } from "@/shared/lib/storage";
 import { useState } from "react";
 import Button from "@/shared/components/design/Button";
 import Text from "@/shared/components/design/Text";
+import { useTranslation } from "react-i18next";
+import { capitalize } from "lodash";
 
 export function SessionComplete() {
+  const { t } = useTranslation();
   const { session } = useSession();
   const [newSessionDurationMinutes, setNewSessionDurationMinutes] = useState<
     number | "not-selected"
@@ -28,10 +31,10 @@ export function SessionComplete() {
         width: "fit-content",
       }}
     >
-      <Text.Header>Session Complete</Text.Header>
-      <Text.Body>This is a good time to take a break.</Text.Body>
+      <Text.Header>{t("postSession.sessionComplete")}</Text.Header>
+      <Text.Body>{t("postSession.goodTimeToTakeABreak")}</Text.Body>
       <br />
-      <Text.Body>When your ready, you can start new session</Text.Body>
+      <Text.Body>{t("postSession.whenYoureReady")}</Text.Body>
       <span>
         <Button
           onClick={() => {
@@ -39,18 +42,18 @@ export function SessionComplete() {
             window.location.reload();
           }}
         >
-          New session
+          {t("common.newSession")}
         </Button>
       </span>
 
-      <Text.Body>Or . . .</Text.Body>
+      <Text.Body>{capitalize(t("common.or"))}&nbsp;. . .</Text.Body>
 
       <div className="join">
         <Button
           onClick={startNewSessionWithSameTools}
           disabled={newSessionDurationMinutes === "not-selected"}
         >
-          New with same tools
+          {t("postSession.newWithSameTools")}
         </Button>
         <select
           className="select"
@@ -64,13 +67,13 @@ export function SessionComplete() {
           }}
         >
           <option value="not-selected">--</option>
-          <option value="1">1 minutes (testing)</option>
-          <option value="5">5 minutes</option>
-          <option value="10">10 minutes</option>
-          <option value="30">30 minutes</option>
-          <option value="60">60 minutes</option>
-          <option value="90">90 minutes</option>
-          <option value="120">120 minutes</option>
+          <option value="1">1 {t("common.minute")}</option>
+          <option value="5">5 {t("common.minutes")}</option>
+          <option value="10">10 {t("common.minutes")}</option>
+          <option value="30">30 {t("common.minutes")}</option>
+          <option value="60">60 {t("common.minutes")}</option>
+          <option value="90">90 {t("common.minutes")}</option>
+          <option value="120">120 {t("common.minutes")}</option>
         </select>
       </div>
     </div>

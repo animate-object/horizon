@@ -13,6 +13,7 @@ import { isEmpty } from "lodash";
 import ToolsetsIcon from "@/shared/components/icons/ToolsetsIcon";
 import { prefixLogger } from "@/shared/lib/log";
 import RemoveIcon from "../icons/RemoveIcon";
+import { useTranslation } from "react-i18next";
 
 const logger = prefixLogger("UpdateToolsetModal: ");
 
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export function EditToolsetModal({ onBack, toolsetId }: Props) {
+  const { t } = useTranslation();
   const [toolUrls, setToolUrls] = useState<string[]>([]);
   const [name, setName] = useState<string>("");
 
@@ -116,10 +118,10 @@ export function EditToolsetModal({ onBack, toolsetId }: Props) {
       }
     >
       <div className="flex flex-col gap-y-2">
-        <FormElementWrapper label="Name this toolset">
+        <FormElementWrapper label={t("toolsets.nameThis")}>
           <input
             id="toolset-name"
-            placeholder="My favorite toolset"
+            placeholder={t("toolsets.namePlaceholder")}
             type="text"
             className="input w-full"
             value={name}
@@ -128,7 +130,7 @@ export function EditToolsetModal({ onBack, toolsetId }: Props) {
             }}
           />
         </FormElementWrapper>
-        <FormElementWrapper label="Edit tools">
+        <FormElementWrapper label={t("toolsets.editTools")}>
           <EditableToolList tools={toolUrls} onUpdateTools={setToolUrls} />
         </FormElementWrapper>
       </div>

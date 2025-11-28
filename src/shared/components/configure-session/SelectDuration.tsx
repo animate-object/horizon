@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
 
 type NotSelected = "not-selected";
 export type DurationOption = number | NotSelected;
@@ -10,12 +11,16 @@ interface Props {
   classNames?: string[];
 }
 
-export const DURATION_CHOICES = [1, 5, 10, 20, 30, 60, 90, 120];
+export const DURATION_CHOICES = [1, 5, 10, 20, 30, 60, 90, 120, 240];
 export const DURATION_CHOICES_LIMITED = [1, 5, 10, 20, 30];
 
-const label = (minutes: number) => {
-  if (minutes === 1) return "1 minute";
-  return `${minutes} minutes`;
+const label = (
+  minutes: number,
+  { unit, unitPl }: { unit: string; unitPl: string }
+) => {
+  // if (minutes === 1) return "1 minute";
+  if (minutes === 1) return `1 ${unit}`;
+  return `${minutes} ${unitPl}`;
 };
 
 const NO_CLASSES: string[] = [];
@@ -26,6 +31,8 @@ export function SelectDuration({
   choices = DURATION_CHOICES,
   classNames = NO_CLASSES,
 }: Props) {
+  const { t } = useTranslation();
+  const timeUnit = { unit: t("minute"), unitPl: t("minutes") };
   return (
     <select
       className={clsx("select", ...classNames)}
@@ -42,7 +49,7 @@ export function SelectDuration({
       <option value="not-selected">--</option>
       {choices.map((minutes) => (
         <option key={minutes} value={minutes.toString()}>
-          {label(minutes)}
+          {label(minutes, timeUnit)}
         </option>
       ))}
     </select>

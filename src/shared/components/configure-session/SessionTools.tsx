@@ -1,6 +1,7 @@
 import Button from "@/shared/components/design/Button";
 import { EditableToolList } from "@/shared/components/tools/EditableToolList";
 import SaveIcon from "@/shared/components/icons/SaveIcon";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   tools: string[];
@@ -15,6 +16,7 @@ export function SessionTools({
   onUpdateTools,
   onSaveAsToolset,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <EditableToolList
       tools={tools}
@@ -26,7 +28,7 @@ export function SessionTools({
           onClick={onSaveAsToolset}
           disabled={!saveToolsetEnabled}
         >
-          <SaveIcon /> Save as toolset
+          <SaveIcon /> {t("toolSelection.saveAsToolset")}
         </Button>
       }
     />

@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ToolsetBrowserCard } from "./ToolsetBrowserCard";
 import { EnhancedToolset } from "./types";
 import { EditToolsetModal } from "./EditToolsetModal";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onBack: VoidFunction;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function ToolsetBrowser({ onBack, onSelectToolset }: Props) {
+  const { t } = useTranslation();
   const [toolsets, setToolsets] = useState<Toolset[]>([]);
   const [toolLookup, setToolLookup] = useState<Record<string, ToolDefinition>>(
     {}
@@ -53,7 +55,7 @@ export function ToolsetBrowser({ onBack, onSelectToolset }: Props) {
   }
 
   return (
-    <InlineModal onBack={onBack} title="Browse Toolsets">
+    <InlineModal onBack={onBack} title={t("toolsets.browseToolsets")}>
       <div className="min-h-80">
         <div className="w-full flex flex-wrap gap-2">
           {toolsetList.map((ts) => (

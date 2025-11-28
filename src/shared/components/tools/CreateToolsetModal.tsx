@@ -11,6 +11,7 @@ import { FormElementWrapper } from "@/shared/components/layout/form";
 import { validateTools } from "@/shared/lib/tool";
 import { isEmpty } from "lodash";
 import ToolsetsIcon from "@/shared/components/icons/ToolsetsIcon";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onBack: VoidFunction;
@@ -23,6 +24,7 @@ export function CreateToolsetModal({
   tools: toolUrls,
   onUpdateTools,
 }: Props) {
+  const { t } = useTranslation();
   const [name, setName] = useState<string>("");
 
   const toolValidation = useMemo(() => validateTools(toolUrls), [toolUrls]);
@@ -44,13 +46,13 @@ export function CreateToolsetModal({
       onBack();
     } catch (err) {
       console.error("Failed to create toolset", err);
-      alert("Something went wrong!");
+      alert(t("common.generalError"));
     }
-  }, [name, toolUrls]);
+  }, [name, toolUrls, t]);
 
   return (
     <InlineModal
-      title={"Create Toolset"}
+      title={t("toolsets.createToolset")}
       onBack={onBack}
       actions={
         <div className="flex justify-end">
@@ -61,16 +63,16 @@ export function CreateToolsetModal({
             onClick={handleCreateToolset}
           >
             <ToolsetsIcon />
-            Create Toolset
+            {t("toolsets.createToolset")}
           </Button>
         </div>
       }
     >
       <div className="flex flex-col gap-y-2">
-        <FormElementWrapper label="Name this toolset">
+        <FormElementWrapper label={t("toolsets.nameThis")}>
           <input
             id="toolset-name"
-            placeholder="My favorite toolset"
+            placeholder={t("toolsets.namePlaceholder")}
             type="text"
             className="input w-full"
             value={name}
@@ -79,7 +81,7 @@ export function CreateToolsetModal({
             }}
           />
         </FormElementWrapper>
-        <FormElementWrapper label="Edit tools">
+        <FormElementWrapper label={t("toolsets.editTools")}>
           <EditableToolList tools={toolUrls} onUpdateTools={onUpdateTools} />
         </FormElementWrapper>
       </div>

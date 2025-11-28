@@ -3,6 +3,7 @@ import { Card } from "@/shared/components/design/Card";
 import Button from "@/shared/components/design/Button";
 import SelectIcon from "@/shared/components/icons/SelectIcon";
 import EditIcon from "../icons/EditIcon";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   toolset: Toolset;
@@ -15,6 +16,7 @@ export function ToolsetBrowserCard({
   onSelectToolset,
   onViewToolsetDetail,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <Card
       title={toolset.name}
@@ -28,10 +30,10 @@ export function ToolsetBrowserCard({
             soft
             onClick={() => onViewToolsetDetail(toolset.id)}
           >
-            <EditIcon width={12} /> Edit
+            <EditIcon width={12} /> {t("common.edit")}
           </Button>
           <Button small onClick={() => onSelectToolset(toolset)}>
-            <SelectIcon width={12} /> Use
+            <SelectIcon width={12} /> {t("common.use")}
           </Button>
         </div>
       }

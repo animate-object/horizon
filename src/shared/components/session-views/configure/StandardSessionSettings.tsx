@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { SessionTools } from "../../configure-session/SessionTools";
 import Button from "../../design/Button";
 import Text from "../../design/Text";
@@ -26,9 +27,10 @@ export function StandardSessionSettings({
   onBrowseToolsets,
   onSaveAsToolset,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <>
-      <FormElementWrapper label="What are you here to do?">
+      <FormElementWrapper label={t("configureSession.descriptionPrompt")}>
         <textarea
           id="description"
           className="textarea w-full"
@@ -47,9 +49,9 @@ export function StandardSessionSettings({
       <FormElementWrapper
         label={
           <div className="flex justify-between items-center">
-            <Text.Body>What tools will you use?</Text.Body>
+            <Text.Body>{t("configureSession.toolPrompt")}</Text.Body>
             <Button color="primary" soft onClick={onBrowseToolsets}>
-              <ToolsetsIcon /> Browse toolsets
+              <ToolsetsIcon /> {t("toolsets.browseToolsets")}
             </Button>
           </div>
         }

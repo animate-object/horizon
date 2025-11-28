@@ -11,8 +11,10 @@ import { useIsBrowserTabActive } from "@/shared/hooks/useTabActive";
 import { CountdownClock } from "../CoundownClock";
 import { useCountdown } from "@/shared/hooks/useCountdown";
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
 
 export function ActiveSession({ condensed }: { condensed?: boolean }) {
+  const { t } = useTranslation();
   const { lastTabActiveTime, isTabVisible } = useIsBrowserTabActive();
   const [sessionData, setSessionData] = useState<
     SessionConfiguration | undefined
@@ -60,7 +62,7 @@ export function ActiveSession({ condensed }: { condensed?: boolean }) {
           <SessionActions condensed={condensed} session={sessionData} />
         </div>
         <TextEl>
-          Time remaining&nbsp;
+          {t("common.timeRemaining")}&nbsp;
           <CountdownClock timeRemainingSeconds={timeRemainingSeconds} />
         </TextEl>
       </div>

@@ -1,0 +1,79 @@
+{
+  "translation": {
+    "common": {
+      "appName": "Horizon",
+      "tagline": "Intentional browsing",
+      "session": "Session",
+      "newSession": "New session",
+      "startSession": "Start session",
+      "startANewSession": "Start a new session",
+      "endSession": "End session",
+      "use": "Use",
+      "edit": "Edit",
+      "addAnother": "Add another",
+      "delete": "Delete",
+      "timeRemaining": "Time Remaining",
+      "freeBrowsing": "Free browsing",
+      "minute": "minute",
+      "minutes": "minutes",
+      "or": "or",
+      "generalError": "Something went wrong!"
+    },
+    "blocked": {
+      "thisPageWasBlocked": "This page was blocked.",
+      "reminder": "Here's a reminder about what you set out to do:",
+      "blockWarningTitle": "Page will be blocked",
+      "blockWarning": "This page is not allowed and will be blocked soon."
+    },
+    "preSession": {
+      "toGetStarted": "To get started, begin a new session"
+    },
+    "postSession": {
+      "sessionComplete": "Session complete",
+      "goodTimeToTakeABreak": "This is a good time to take a break",
+      "whenYoureReady": "When your ready, you can start new session",
+      "newWithSameTtools": "New with same tools"
+    },
+    "configureSession": {
+      "freeBrowseDescription": "Browse the internet without restrictions for a limited amount of time",
+      "freeBrowseDisabled": "Free browsing is disabled for a bit longer.",
+      "descriptionPrompt": "What are you here to do?",
+      "toolPrompt": "What tools will you use?",
+      "durationPrompt": "How long will you work?",
+      "promptToShort": "Say a little bit more",
+      "promptNotEnoughWords": "Express yourself - use at least {{wordcount}} words",
+      "promptNotComplexEnough": "This description doesn't look quite right, try again",
+      "alertMissingDuration": "Select duration",
+      "alertMissingTools": "Specify at least "
+    },
+    "toolSelection": {
+      "placeholder": "Select...",
+      "saveAsToolset": "Save as toolset",
+      "invalidToolUrl": "One or more tools are not valid URLs"
+    },
+    "toolsets": {
+      "browseToolsets": "Browse toolsets",
+      "createToolset": "Create toolset",
+      "editToolset": "Edit toolset",
+      "nameThis": "Name this toolset",
+      "editTools": "Edit tools",
+      "update": "Update toolset",
+      "namePlaceholder": "My favorite toolset"
+    },
+    "activeSession": {
+      "yourTask": "Your task",
+      "yourTools": "You can use these tools",
+      "freeBrowsingMessage": "Do whatever! Anything goes."
+    },
+    "break": {
+      "title": "Time for a break",
+      "description": "Stand up, walk around, grab a coffee, step outside."
+    },
+    "dev": {
+      "clearSession": "Clear session",
+      "clearRules": "Clear rules",
+      "hideForSession": "Hide for session",
+      "sessionData": "Session data"
+    }
+  }
+}
