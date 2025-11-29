@@ -4,7 +4,6 @@ import { minutesToMs } from "../lib/time";
 import { CountdownClock } from "./CoundownClock";
 import { useTranslation } from "react-i18next";
 import { initI18n } from "../lib/i18n";
-import "@/assets/app.css";
 
 initI18n();
 
@@ -30,6 +29,7 @@ export function BlockCountdown({ minutes = 0.5 }: Props) {
   return (
     <div
       style={{
+        fontFamily: "Arial, sans-serif",
         color: "black",
         fontSize: 16,
         zIndex: 1000000,
