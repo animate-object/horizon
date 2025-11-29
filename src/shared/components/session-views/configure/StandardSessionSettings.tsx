@@ -41,7 +41,7 @@ export function StandardSessionSettings({
         />
       </FormElementWrapper>
       <div className="flex flex-col gap-y-2 text-error">
-        {descriptionValidationMessage && (
+        {descriptionValidationMessage && description.length > 0 && (
           <span>{descriptionValidationMessage}</span>
         )}
       </div>

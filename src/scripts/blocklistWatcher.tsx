@@ -32,7 +32,9 @@ function mountBlockWarning() {
   const reactRoot = document.createElement("div");
   reactRoot.id = REACT_ROOT_ID;
   document.body.appendChild(reactRoot);
-  ReactDOM.createRoot(reactRoot).render(<BlockCountdown />);
+  reactRoot.attachShadow({ mode: "open" });
+
+  ReactDOM.createRoot(reactRoot.shadowRoot!).render(<BlockCountdown />);
 }
 
 async function handlePageFocusedOrActive() {

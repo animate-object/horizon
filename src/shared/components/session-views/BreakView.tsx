@@ -13,7 +13,7 @@ export function BreakView() {
 
       <Text.Body light>{t("break.thisIsAGoodTime")}</Text.Body>
       <Text.Body light>
-        <ul className="list list-disc ps-4">
+        <ul className="list list-disc ps-5">
           <li>{t("break.thisIsAGoodTime1")}</li>
           <li>{t("break.thisIsAGoodTime2")}</li>
           <li>{t("break.thisIsAGoodTime3")}</li>
@@ -24,7 +24,7 @@ export function BreakView() {
         <div className="collapse-title font-semibold ps-0 py-1">
           <Text.Body>{t("break.why")}</Text.Body>
         </div>
-        <div className="collapse-content text-sm ps-2">
+        <div className="collapse-content text-sm ps-0">
           <Text.Body light>{t("break.whyExplanation1")}</Text.Body>
           <br />
           <Text.Body light>{t("break.whyExplanation2")}</Text.Body>

@@ -30,9 +30,7 @@
     },
     "postSession": {
       "sessionComplete": "Session complete",
-      "goodTimeToTakeABreak": "This is a good time to take a break.",
-      "whenYoureReady": "When you're ready, you can start new session.",
-      "newWithSameTtools": "New with same tools"
+      "whenYoureReady": "When you're ready, you can start new session."
     },
     "configureSession": {
       "freeBrowseDescription": "Browse the internet without restrictions for a limited amount of time.",
@@ -62,7 +60,8 @@
     "activeSession": {
       "yourTask": "Your task",
       "yourTools": "You can use these tools",
-      "freeBrowsingMessage": "Do whatever! Anything goes."
+      "freeBrowsingTitle": "Free browsing.",
+      "freeBrowsingMessage": "You can use any site on the internet."
     },
     "break": {
       "title": "Time for a break",

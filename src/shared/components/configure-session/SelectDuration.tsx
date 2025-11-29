@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const DURATION_CHOICES = [1, 5, 10, 20, 30, 60, 90, 120, 240];
-export const DURATION_CHOICES_LIMITED = [1, 5, 10, 20, 30];
+export const DURATION_CHOICES_LIMITED = [1, 5, 10, 20];
 
 const label = (
   minutes: number,

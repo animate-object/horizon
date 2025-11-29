@@ -3,6 +3,10 @@ import { useCountdown } from "../hooks/useCountdown";
 import { minutesToMs } from "../lib/time";
 import { CountdownClock } from "./CoundownClock";
 import { useTranslation } from "react-i18next";
+import { initI18n } from "../lib/i18n";
+import "@/assets/app.css";
+
+initI18n();
 
 interface Props {
   minutes?: number;
@@ -26,6 +30,8 @@ export function BlockCountdown({ minutes = 0.5 }: Props) {
   return (
     <div
       style={{
+        color: "black",
+        fontSize: 16,
         zIndex: 1000000,
         position: "fixed",
         bottom: 10,
@@ -33,7 +39,8 @@ export function BlockCountdown({ minutes = 0.5 }: Props) {
         background: "white",
         border: "0.5px solid black",
         padding: "1rem",
-        opacity: 0.8,
+        opacity: 0.85,
+        lineHeight: 1,
       }}
       className="shadow-md"
     >
