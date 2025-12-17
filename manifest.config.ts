@@ -20,6 +20,7 @@ export default defineManifest({
     "declarativeNetRequest",
     "storage",
     "alarms",
+    "webNavigation",
   ],
   host_permissions: ["<all_urls>"],
   background: {

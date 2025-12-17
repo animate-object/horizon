@@ -5,6 +5,7 @@ export enum StorageKeys {
   DatastorePastSessions = "datastore.pastSessions",
   DatastoreToolsets = "datastore.toolsets",
   Break = "break",
+  RecentAutoBlockedPages = "recentAutoBlockedPages",
 }
 
 const set = (

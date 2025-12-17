@@ -27,7 +27,7 @@ const UNIVERSAL_BLOCK_RULE: chrome.declarativeNetRequest.Rule = {
   },
 };
 
-const allowUrlRule = (
+export const allowUrlRule = (
   url: string,
   idx: number,
   priority: number = 10
@@ -60,4 +60,14 @@ export async function blockAllSites(opts: BlockSitesOpts = DEFAULT_OPTS) {
   await chrome.declarativeNetRequest.updateDynamicRules({
     addRules: rules,
   });
+}
+
+export const MAX_IN_SESSION_EXEMPTIONS = 2;
+
+export async function addOneExemption(url: string) {
+  const rules = await chrome.declarativeNetRequest.getDynamicRules();
+  const maxId = Math.max(...rules.map((rule) => rule.id), 0);
+
+  const rule = allowUrlRule(url, maxId + 1);
+  await chrome.declarativeNetRequest.updateDynamicRules({ addRules: [rule] });
 }

@@ -4,6 +4,7 @@ export enum MessageType {
   endSession = "end-session",
   testBlocklist = "test-block-list",
   openExtensionView = "open-extension-view",
+  addExemption = "add-exemption",
 }
 
 interface BaseMessage {
@@ -27,6 +28,11 @@ export interface EndSessionMessage extends BaseMessage {
   type: MessageType.endSession;
 }
 
+export interface AddExemption extends BaseMessage {
+  type: MessageType.addExemption;
+  exemptToolUrl: string;
+}
+
 export interface OpenExtensionView extends BaseMessage {
   type: MessageType.openExtensionView;
   view: "landing" | "blocked";
@@ -37,7 +43,8 @@ export type Message =
   | SessionStartedMessage
   | LandingViewedMessage
   | EndSessionMessage
-  | OpenExtensionView;
+  | OpenExtensionView
+  | AddExemption;
 
 export const MessageBuilder = {
   sessionStarted: (): SessionStartedMessage => ({
@@ -54,6 +61,10 @@ export const MessageBuilder = {
   openExtensionView: (view: OpenExtensionView["view"]): OpenExtensionView => ({
     type: MessageType.openExtensionView,
     view,
+  }),
+  addExemption: (url: string): AddExemption => ({
+    type: MessageType.addExemption,
+    exemptToolUrl: url,
   }),
 };
 

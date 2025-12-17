@@ -1,4 +1,9 @@
-import { blockAllSites, clearAllBlockingRules } from "@/shared/lib/rules";
+import {
+  addOneExemption,
+  blockAllSites,
+  clearAllBlockingRules,
+  MAX_IN_SESSION_EXEMPTIONS,
+} from "@/shared/lib/rules";
 import {
   PastSession,
   PastSessionFactory,
@@ -6,6 +11,7 @@ import {
   ToolLoader,
 } from "@/shared/lib/datastore";
 import {
+  AddExemption,
   AlarmType,
   Message,
   MessageType,
@@ -17,7 +23,8 @@ import {
   computeSessionState,
   SessionConfiguration,
 } from "@/shared/lib/session";
-import { Storage } from "@/shared/lib/storage";
+import { Storage, StorageKeys } from "@/shared/lib/storage";
+import { act } from "react";
 
 type MessageHandler = Parameters<
   typeof chrome.runtime.onMessage.addListener
@@ -151,6 +158,36 @@ async function handleOpenExtensionView(message: OpenExtensionView) {
   });
 }
 
+async function handleAddExemption(
+  message: AddExemption,
+  sendResponse: (message?: any) => void
+) {
+  const activeSession = await Storage.get<SessionConfiguration | undefined>(
+    Storage.keys.ActiveSessionConfig
+  );
+  if (activeSession == null) {
+    console.warn("Cannot add exemption with no active session");
+    return;
+  }
+
+  const usedExemptions = activeSession.usedExemptions ?? 0;
+
+  if (usedExemptions >= MAX_IN_SESSION_EXEMPTIONS) {
+    console.warn(
+      `Cannot add more than ${MAX_IN_SESSION_EXEMPTIONS} exemptions in one session`
+    );
+  }
+
+  await addOneExemption(message.exemptToolUrl);
+
+  await Storage.set(Storage.keys.ActiveSessionConfig, {
+    ...activeSession,
+    usedExemptions: usedExemptions + 1,
+  });
+
+  sendResponse(ResponseBuilder.taskComplete());
+}
+
 const handleKnownMessage = async (
   message: Message,
   sendResponse: (message?: any) => void
@@ -170,6 +207,9 @@ const handleKnownMessage = async (
       return;
     case MessageType.openExtensionView:
       await handleOpenExtensionView(message);
+      return;
+    case MessageType.addExemption:
+      await handleAddExemption(message, sendResponse);
       return;
     default:
       console.warn("Unknown message type", message);

@@ -6,6 +6,7 @@ import Root from "@/shared/components/design/Theme";
 import DevPanel from "@/shared/components/dev/DevPanel";
 import { SessionActions } from "@/shared/components/session-views/SessionActions";
 import { SessionDetails } from "@/shared/components/session-views/SessionDetails";
+import { UnintendedBlockCandidates } from "@/shared/components/unintendedBlock/UnintendedBlockCandidates";
 import { useSession } from "@/shared/hooks/useSession";
 import { initI18n } from "@/shared/lib/i18n";
 import { clearSessionState, computeSessionState } from "@/shared/lib/session";
@@ -19,6 +20,7 @@ function BlockedPage() {
   const { session } = useSession();
   const { t } = useTranslation();
   const sessionState = useMemo(() => computeSessionState(session), [session]);
+
   return (
     <Root>
       <Layout overlay={<DevPanel />}>
@@ -45,6 +47,9 @@ function BlockedPage() {
                 {session && <SessionDetails {...session} />}
               </div>
             )}
+
+            <UnintendedBlockCandidates />
+
             <div>
               <SessionActions session={session} />
             </div>

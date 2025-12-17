@@ -2,6 +2,15 @@ export function minutesToMs(n: number): number {
   return n * 60 * 1000;
 }
 
+export function secondsToMs(n: number): number {
+  return n * 1000;
+}
+
+function addSeconds(signedSeconds: number, now_?: number | undefined): number {
+  const now = now_ || Date.now();
+  return now + secondsToMs(signedSeconds);
+}
+
 function addMinutes(signedMinutes: number, now_?: number | undefined): number {
   const now = now_ || Date.now();
   return now + minutesToMs(signedMinutes);
@@ -16,6 +25,17 @@ export function minutesFromNow(
 
 export function minutesAgo(minutes: number, now_?: number | undefined): number {
   return addMinutes(-Math.abs(minutes), now_);
+}
+
+export function secondsFromNow(
+  seconds: number,
+  now_?: number | undefined
+): number {
+  return addSeconds(Math.abs(seconds), now_);
+}
+
+export function secondsAgo(seconds: number, now_?: number | undefined): number {
+  return addSeconds(-Math.abs(seconds), now_);
 }
 
 export function epochToDate(epochMs: number): Date {

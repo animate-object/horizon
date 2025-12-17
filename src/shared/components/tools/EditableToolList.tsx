@@ -11,6 +11,21 @@ interface Props {
   onUpdateTools: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+const TOOL_TYPEAHEAD_INPUT_PREFIX = "tool-typeahead-input-";
+const focusLastTypeaheadInput = () => {
+  setTimeout(() => {
+    const inputs = document.querySelectorAll(
+      `[id^=${TOOL_TYPEAHEAD_INPUT_PREFIX}]`
+    );
+    if (inputs.length === 0) return;
+    console.log(inputs);
+    const lastInput = inputs[inputs.length - 1];
+    if (lastInput) {
+      (lastInput as HTMLInputElement).focus();
+    }
+  }, 10);
+};
+
 export function EditableToolList({
   tools,
   secondaryAuthoringAction,
@@ -21,6 +36,7 @@ export function EditableToolList({
 
   const handleAddTool = useCallback(() => {
     onUpdateTools([...tools, ""]);
+    focusLastTypeaheadInput();
   }, [tools, onUpdateTools]);
 
   const handleUpdateTool = useCallback(
@@ -61,6 +77,7 @@ export function EditableToolList({
               onSelect={(data) => handleUpdateTool(data?.url ?? "", idx)}
               onFocus={() => setFocusedIdx(idx)}
               onBlur={() => setFocusedIdx(null)}
+              inputId={`${TOOL_TYPEAHEAD_INPUT_PREFIX}${idx}`}
               value={toolUrl}
             />
             <Button

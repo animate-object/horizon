@@ -1,6 +1,7 @@
 import { AlarmType } from "@/shared/lib/messages";
 import { messageRoutingHandler } from "@/background/messageHandlers";
 import { blockAllSites } from "@/shared/lib/rules";
+import { initTracking } from "./blockLogging";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.tabs.create({ url: chrome.runtime.getURL("src/pages/landing.html") });
@@ -24,3 +25,5 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     console.info("SessionEnd: Everything is blocked");
   }
 });
+
+initTracking();

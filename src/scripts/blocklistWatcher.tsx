@@ -7,15 +7,15 @@ const logger = prefixLogger("blocklistWatcher: ");
 
 logger.debug("Block list watcher is active");
 
-async function shouldPageBeBlocked(): Promise<boolean> {
+export async function shouldPageBeBlocked(url: string): Promise<boolean> {
   logger.debug("shouldPageBeBlocked");
 
   const decision: DecisionResponse = await chrome.runtime.sendMessage(
-    MessageBuilder.testBlockList(window.location.href)
+    MessageBuilder.testBlockList(url)
   );
 
   logger.debug(
-    `Decision response ${window.location.href} = ${
+    `Decision response ${url} = ${
       decision?.decision == null
         ? "INVALID RESPONSE"
         : decision.decision
@@ -24,6 +24,10 @@ async function shouldPageBeBlocked(): Promise<boolean> {
     }`
   );
   return decision?.decision ?? false;
+}
+
+async function shouldThisPageBeBlocked(): Promise<boolean> {
+  return shouldPageBeBlocked(window.location.href);
 }
 
 const REACT_ROOT_ID = "horizon-block-countdown";
@@ -44,7 +48,7 @@ async function handlePageFocusedOrActive() {
     logger.info("Already blocked");
     return;
   }
-  if (await shouldPageBeBlocked()) {
+  if (await shouldThisPageBeBlocked()) {
     mountBlockWarning();
   }
 }

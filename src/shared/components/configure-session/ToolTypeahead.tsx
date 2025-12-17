@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ToolDefinition, ToolLoader } from "@/shared/lib/datastore";
 import CreatableSelect from "react-select/creatable";
 import clsx from "clsx";
-import { isValidToolUrl } from "@/shared/lib/tool";
+import { isValidToolUrlIfStripped, stripUrl } from "@/shared/lib/tool";
 
 type CreatableProps = React.ComponentProps<typeof CreatableSelect>;
 
 interface Props
   extends Pick<
     CreatableProps,
-    "onBlur" | "onFocus" | "classNames" | "defaultValue" | "styles"
+    "onBlur" | "onFocus" | "classNames" | "defaultValue" | "styles" | "inputId"
   > {
   onSelect: ({ url }: Pick<ToolDefinition, "url">) => void;
   value: string;
@@ -23,7 +23,8 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
   }, []);
 
   const handleCreate = useCallback(
-    (url: string) => {
+    (originalUrl: string) => {
+      const url = stripUrl(originalUrl);
       setCreated((rest) => [...rest, { url }]);
       onSelect({ url });
     },
@@ -40,15 +41,16 @@ export function ToolTypeahead({ onSelect, value, ...rest }: Props) {
       onChange={(def) => {
         onSelect(def as ToolDefinition);
       }}
-      isValidNewOption={isValidToolUrl}
+      menuPortalTarget={document.body}
+      isValidNewOption={isValidToolUrlIfStripped}
       value={value ? { url: value } : undefined}
       onCreateOption={handleCreate}
       classNames={{
         container: () => "w-full",
         control: () => "rounded-0 select w-full border-[0.5px] px-3",
-        menu: () => "rounded-0 border-[0.5px] bg-base-300 z-90",
+        menu: () => "rounded-0 border-[0.5px] bg-base-300 z-50",
         option: ({ isFocused, isSelected }) =>
-          clsx("px-3 py-2 text-primary z-90", {
+          clsx("px-3 py-2 text-primary", {
             "bg-base-200": isFocused || isSelected,
           }),
 

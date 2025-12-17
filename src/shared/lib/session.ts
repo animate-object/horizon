@@ -7,6 +7,7 @@ export interface SessionConfiguration {
   durationMinutes: number;
   startedAt: string;
   allowedToolUrls: string[];
+  usedExemptions?: number;
   mode?: "standard" | "free";
 }
 export type SessionState = "configure" | "active" | "complete";
