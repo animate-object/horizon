@@ -14,14 +14,7 @@ export default defineManifest({
       48: "public/horizon.png",
     },
   },
-  permissions: [
-    "scripting",
-    "contentSettings",
-    "declarativeNetRequest",
-    "storage",
-    "alarms",
-    "webNavigation",
-  ],
+  permissions: ["declarativeNetRequest", "storage", "alarms", "webNavigation"],
   host_permissions: ["<all_urls>"],
   background: {
     service_worker: "src/background/main.ts",

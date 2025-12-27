@@ -9,7 +9,6 @@ import Button from "../../design/Button";
 import StartIcon from "../../icons/StartIcon";
 import { SetToolsCb } from "./types";
 import { useBreak } from "@/shared/hooks/useBreak";
-import { CountdownClock } from "../../CoundownClock";
 import { useTranslation } from "react-i18next";
 import { ConfigureFreeBrowsing } from "./ConfigureFreeBrowsing";
 import { validateFormState } from "@/shared/lib/sessionSettingsValidation";

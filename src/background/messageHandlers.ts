@@ -23,8 +23,7 @@ import {
   computeSessionState,
   SessionConfiguration,
 } from "@/shared/lib/session";
-import { Storage, StorageKeys } from "@/shared/lib/storage";
-import { act } from "react";
+import { Storage } from "@/shared/lib/storage";
 
 type MessageHandler = Parameters<
   typeof chrome.runtime.onMessage.addListener

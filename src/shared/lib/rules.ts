@@ -62,7 +62,7 @@ export async function blockAllSites(opts: BlockSitesOpts = DEFAULT_OPTS) {
   });
 }
 
-export const MAX_IN_SESSION_EXEMPTIONS = 2;
+export const MAX_IN_SESSION_EXEMPTIONS = 4;
 
 export async function addOneExemption(url: string) {
   const rules = await chrome.declarativeNetRequest.getDynamicRules();

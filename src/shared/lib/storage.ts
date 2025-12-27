@@ -1,11 +1,21 @@
 export enum StorageKeys {
+  // --- App state keys ---
+  // the in progress browsing session
   ActiveSessionConfig = "active-session-config",
-  HideDevPanelUntil = "hide-dev-panel-until",
-  DatastoreTools = "datastore.tools",
-  DatastorePastSessions = "datastore.pastSessions",
-  DatastoreToolsets = "datastore.toolsets",
+  // the current/next/last break being enforced between sessions
   Break = "break",
+  // used to surface UI around accidental blocks
   RecentAutoBlockedPages = "recentAutoBlockedPages",
+  // dev facing
+  HideDevPanelUntil = "hide-dev-panel-until",
+  // -- Datastore keys ---
+  // previously used site / webapp urls to power a typeahead
+  DatastoreTools = "datastore.tools",
+  // user defined collections for sites that are ferquently used together
+  DatastoreToolsets = "datastore.toolsets",
+  // the last 50 user sessions - anticipated future use for features like
+  // repeat my last session or create toolset from past session
+  DatastorePastSessions = "datastore.pastSessions",
 }
 
 const set = (
