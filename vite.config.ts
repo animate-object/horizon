@@ -18,6 +18,15 @@ export default defineConfig({
     crx({ manifest }),
     zip({ outDir: "release", outFileName: `crx-${name}-${version}.zip` }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        popup: path.resolve(__dirname, "src/pages/popup.html"),
+        blocked: path.resolve(__dirname, "src/pages/blocked.html"),
+        landing: path.resolve(__dirname, "src/pages/landing.html"),
+      },
+    },
+  },
   server: {
     cors: {
       origin: [/chrome-extension:\/\//],

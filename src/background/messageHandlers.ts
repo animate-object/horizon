@@ -93,7 +93,12 @@ const handleLandingViewed = async () => {
   if (computeSessionState(config) != "active") {
     console.info("LandingViewHandler: Session is not active");
     const rules = await chrome.declarativeNetRequest.getDynamicRules();
-    if (rules.length === 1 && rules[0].id === 1) {
+    if (
+      rules.length === 1 &&
+      rules[0].id === 1 &&
+      rules[0].condition.urlFilter === "*" &&
+      rules[0].action?.type === "redirect"
+    ) {
       console.info("LandingViewHandler: URL Blocking state is correct");
       return;
     }
@@ -121,34 +126,55 @@ const handleEndSessionEarly = async (sendResponse: (message?: any) => void) => {
   sendResponse(ResponseBuilder.taskComplete());
 };
 
+const chromeStyleMatcherMatchesUrl = (
+  chromeStyleMatcher: string,
+  url: string
+): boolean => {
+  if (!chromeStyleMatcher.startsWith("||")) {
+    console.warn("blocklist checker: malformed matcher", chromeStyleMatcher);
+  }
+
+  const frontStripped = chromeStyleMatcher.slice(2);
+  const backStripped = frontStripped.endsWith("*")
+    ? frontStripped.slice(0, frontStripped.length - 1)
+    : frontStripped;
+
+  return new URL(url).hostname.startsWith(backStripped);
+};
+
 const handleTestBlocklist = async (
   message: TestBlockListMessage,
   sendResponse: (message?: any) => void
 ) => {
-  const rules = await chrome.declarativeNetRequest.testMatchOutcome({
-    url: message.url,
-    type: "main_frame",
-  });
-
-  if (rules.matchedRules.length === 0) {
-    console.info("Free browsing mode");
-    sendResponse(ResponseBuilder.decision(false));
-  }
-
-  console.debug(`URL matched ${rules.matchedRules.length} rules`);
+  console.log("URL", message.url);
   const activeRules = await chrome.declarativeNetRequest.getDynamicRules();
 
-  let isBlocked = true;
+  if (activeRules.length === 0) {
+    console.info(
+      "blocklist checker: free browsing mode detected, site allowed"
+    );
+    // all sites allowed in free browsing mode
+    sendResponse(ResponseBuilder.decision(false));
+    return;
+  }
 
-  for (const match of rules.matchedRules) {
-    const rule = activeRules.find((r) => r.id === match.ruleId);
-    if (rule?.action?.type === "allow") {
-      isBlocked = false;
+  const allowUrlMatchers = activeRules
+    .filter((r) => r.action.type === "allow" && r.condition.urlFilter != null)
+    .map((r) => r.condition.urlFilter as string);
+
+  let decision = true;
+
+  for (const allowedUrlMatcher of allowUrlMatchers) {
+    if (chromeStyleMatcherMatchesUrl(allowedUrlMatcher, message.url)) {
+      // site is allowed, and therefore not blocked
+      decision = false;
       break;
     }
   }
 
-  sendResponse(ResponseBuilder.decision(isBlocked));
+  console.info("decision", decision);
+
+  sendResponse(ResponseBuilder.decision(decision));
 };
 
 async function handleOpenExtensionView(message: OpenExtensionView) {
